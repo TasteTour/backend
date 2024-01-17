@@ -2,6 +2,7 @@ const express = require('express')
 const router  = express.Router();
 const logging = require('./middleware/logging')
 const verify = require('./middleware/jwtVerify');
+const { swaggerUi, specs } = require('./middleware/swagger');
 
 /**
  * 파일 업로드를 위한 Multer 모듈
@@ -17,10 +18,29 @@ const fileController = require('./api/file/fileController')
 // 전체 적용 (router.get 보다 먼저 선언해야 사용 가능함!)
 router.use(logging)
 
+
 /**
- * fileController
+ * @swagger
+ *  /product:
+ *    get:
+ *      tags:
+ *      - product
+ *      description: 모든 제품 조회
+ *      produces:
+ *      - application/json
+ *      parameters:
+ *        - in: query
+ *          name: category
+ *          required: false
+ *          schema:
+ *            type: integer
+ *            description: 카테고리
+ *      responses:
+ *       200:
+ *        description: 제품 조회 성공
  */
 router.post('/api/file', upload.single('file'), fileController.upload);
+
 router.get('/api/file/:id', fileController.download);
 
 
