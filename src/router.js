@@ -1,15 +1,15 @@
 const express = require('express')
-const router  = express.Router();
+const router = express.Router();
 const logging = require('./middleware/logging')
 const verify = require('./middleware/jwtVerify');
-const { swaggerUi, specs } = require('./middleware/swagger');
+const {swaggerUi, specs} = require('./middleware/swagger');
 
 /**
  * 파일 업로드를 위한 Multer 모듈
  * public/storage 폴더에 파일들이 저장이 되고 있음
  */
 const multer = require('multer')
-const upload = multer({dest : 'public/storage'}) // 소스를 잘 설정해야함
+const upload = multer({dest: 'public/storage'}) // 소스를 잘 설정해야함
 
 const apiUserController = require('./api/user/userController');
 const apiFeedController = require('./api/board/boardController');
@@ -19,28 +19,7 @@ const fileController = require('./api/file/fileController')
 router.use(logging)
 
 
-/**
- * @swagger
- *  /product:
- *    get:
- *      tags:
- *      - product
- *      description: 모든 제품 조회
- *      produces:
- *      - application/json
- *      parameters:
- *        - in: query
- *          name: category
- *          required: false
- *          schema:
- *            type: integer
- *            description: 카테고리
- *      responses:
- *       200:
- *        description: 제품 조회 성공
- */
 router.post('/api/file', upload.single('file'), fileController.upload);
-
 router.get('/api/file/:id', fileController.download);
 
 
@@ -49,7 +28,57 @@ router.get('/api/file/:id', fileController.download);
  */
 // 로깅 동시에 적용 가능함
 router.get('/api/user/:id', apiUserController.userinfo);
-router.post('/api/user/register', apiUserController.register);
+
+/**
+ * @swagger
+ *  /user/register:
+ *      post:
+ *          summary: Add a new pet
+ *          tags:
+ *              - User
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/UserRegister'
+ *                      example:
+ *                          memberName: 전현준
+ *                          memberEmail: abc@tukorea.ac.kr
+ *                          memberPhone: "01012345688"
+ *                          memberPassword: password
+ *
+ *          responses:
+ *              201:
+ *                  description: 회원 가입 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 201
+ *                              httpStatus: CREATED
+ *                              message: 회원가입 성공했습니다
+ *                              data: {
+ *                                  memberName: 전현준,
+ *                                  memberEmail: "abc@tukorea.ac.kr",
+ *                                  memberPhone: "01012345688"
+ *                              }
+ *              409:
+ *                  description: 이메일 중복으로 인한 회원 가입 불가
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 409
+ *                              httpStatus: CONFLICT
+ *                              message: 이메일 중복으로 회원 가입이 불가합니다!
+ *                              data: {null}
+ */
+router.post('/user/register', apiUserController.register);
+
 router.post('/api/user/login', apiUserController.login);
 
 
@@ -58,7 +87,7 @@ router.post('/api/user/login', apiUserController.login);
  */
 // middleware로 jwt 인증을 보냄
 router.get('/api/feed', verify, apiFeedController.index);
-router.post('/api/feed', verify,  apiFeedController.store);
+router.post('/api/feed', verify, apiFeedController.store);
 router.get('/api/feed/:id', verify, apiFeedController.show);
 router.post('/api/feed/:id', verify, apiFeedController.update);
 router.post('/api/feed/:id/delete', verify, apiFeedController.destroy);

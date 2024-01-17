@@ -1,0 +1,33 @@
+# /swagger/User.yml
+
+components:
+  schemas:
+    UserRegister:
+      properties:
+        memberName:
+          type: string
+          description: 전현준
+        memberEmail:
+          type: string
+          description: abc@tukorea.ac.kr
+        memberPhone:
+          type: string
+          description: 01012345678
+        memberPassword:
+          type: string
+          description: password
+    HttpResponse:
+      properties:
+        code:
+          type: integer
+          description: 200
+        httpStatus:
+          type: string
+          description: OK
+        message:
+          type: string
+          description: OOO님 회원 가입 되었습니다!
+        data:
+          type: json
+          description: 회원 가입
+
