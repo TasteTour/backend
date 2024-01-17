@@ -3,6 +3,8 @@ const repository = require('./repository')
 const crypto = require('crypto')
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 
+// TODO : 이메일 인증 기능 추가할지 고민
+
 exports.register = async (req, res) => {
     const {memberName, memberEmail, memberPhone, memberPassword} = req.body;
 
@@ -32,22 +34,35 @@ exports.register = async (req, res) => {
         return res.send({ code: StatusCodes.CREATED, httpStatus: ReasonPhrases.CREATED, message: "회원가입 성공했습니다!", data: data});
     }
     else {
-        res.send({result: 'fail'})
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "[회원가입] DB 구성 중 오류가 발생했습니다"})
     }
 }
 
-exports.login = async (req, res) => {
-    let {email, password} = req.body;
-    let result = crypto.pbkdf2Sync(password, process.env.SALT_KEY, 50, 100, 'sha512')
 
-    let item = await repository.login(email, result.toString('base64'))
+exports.login = async (req, res) => {
+    let {memberEmail, memberPassword} = req.body;
+    let result = crypto.pbkdf2Sync(memberPassword, process.env.SALT_KEY, 50, 100, 'sha512')
+
+    let item = await repository.login(memberEmail, result.toString('base64'))
+
+    console.log(item)
 
     if(item == null){
-        res.send('{ result : "login fail" }')
+        res.status(StatusCodes.UNAUTHORIZED)
+        res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "이메일 또는 비밀번호가 틀립니다"})
     }
     else {
-        let token = await jwt.jwtSign({id : email});
-        res.send(`{ access_token : ${token} }`)
+        let token = await jwt.jwtSign({id : memberEmail});
+        const data = {
+            memberName: item.memberName,
+            memberEmail: item.memberEmail,
+            memberPhone: item.memberPhone,
+            Authorization: token
+        }
+        res.status(StatusCodes.OK)
+        return res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: `${item.memberName}님 로그인 되었습니다.`, data: data});
+
     }
 }
 

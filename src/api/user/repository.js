@@ -15,18 +15,18 @@ exports.register = async (memberName, memberEmail, memberPhone, memberPassword) 
 
 /**
  * 로그인
- * @param email
- * @param paassword
+ * @TODO 추후 "가입되어 있지 않은 회원입니다" 기능 추가하기
+ * @param memberEmail
+ * @param memberPassword
  * @returns {Promise<unknown>}
  */
-exports.login = async (email, password) => {
-    const query = `SELECT * FROM user WHERE email = ? AND password = ?`;
-    let result = await pool(query, [email, password]);
+exports.login = async (memberEmail, memberPassword) => {
+    const query = `SELECT * FROM member WHERE memberEmail = ? AND memberPassword = ?`;
+    let result = await pool(query, [memberEmail, memberPassword]);
     return (result.length < 0) ? null : result[0];
 }
 
 /**
- * @TODO result에서 값만 추출하는 방법 찾기
  * 이메일 입력하여 일치하는 회원 찾기
  * @param email
  * @param paassword

@@ -30,4 +30,11 @@ components:
         data:
           type: json
           description: 회원 가입
-
+    UserLogin:
+      properties:
+        memberEmail:
+          type: string
+          description: abc@tukorea.ac.kr
+        memberPassword:
+          type: string
+          description: password

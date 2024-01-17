@@ -22,7 +22,7 @@ router.use(logging)
 router.post('/api/file', upload.single('file'), fileController.upload);
 router.get('/api/file/:id', fileController.download);
 
-
+/* ============================================================================== */
 /**
  * apiUserController (고객의 정보를 조회하는 Controller)
  */
@@ -33,7 +33,7 @@ router.get('/api/user/:id', apiUserController.userinfo);
  * @swagger
  *  /user/register:
  *      post:
- *          summary: Add a new pet
+ *          summary: 회원가입
  *          tags:
  *              - User
  *          requestBody:
@@ -75,11 +75,69 @@ router.get('/api/user/:id', apiUserController.userinfo);
  *                              code: 409
  *                              httpStatus: Conflict
  *                              message: 이메일 중복으로 회원 가입이 불가합니다!
+ *              500:
+ *                  description: DB 오류로 인한 오류 발생
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 회원 가입 DB 구성 중 오류가 발생했습니다
  */
 router.post('/user/register', apiUserController.register);
 
-router.post('/api/user/login', apiUserController.login);
+/**
+ * @swagger
+ *  /user/login:
+ *      post:
+ *          summary: 로그인
+ *          tags:
+ *              - User
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/UserLogin'
+ *                      example:
+ *                          memberEmail: abc@tukorea.ac.kr
+ *                          memberPassword: password
+ *
+ *          responses:
+ *              200:
+ *                  description: 로그인 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: OK
+ *                              message: 전현준님 로그인 되었습니다.
+ *                              data: {
+ *                                  memberName: 전현준,
+ *                                  memberEmail: "abc@tukorea.ac.kr",
+ *                                  memberPhone: "01012345688",
+ *                                  Authorization: "JWT token"
+ *                              }
+ *              401:
+ *                  description: 로그인 실패
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 401
+ *                              httpStatus: Unauthorized
+ *                              message: 이메일 또는 비밀번호가 틀립니다
+ */
+router.post('/user/login', apiUserController.login);
 
+
+/* ============================================================================== */
 
 /**
  * apiFeedController (피드 CRUD 하는 부분)
