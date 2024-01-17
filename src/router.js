@@ -143,6 +143,12 @@ router.post('/user/login', apiUserController.login);
  *              - Authorization: []
  *          tags:
  *              - User
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
  *
  *          responses:
  *              200:
