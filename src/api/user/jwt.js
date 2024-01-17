@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const {resolve} = require("express-hbs/lib/resolver");
 const privateKey = 'my-secret-key';
 
 /**

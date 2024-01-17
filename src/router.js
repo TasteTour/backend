@@ -3,13 +3,15 @@ const router  = express.Router();
 const logging = require('./middleware/logging')
 const verify = require('./middleware/jwtVerify');
 
-// 파일 업로드를 위한 multer 모듈
+/**
+ * 파일 업로드를 위한 Multer 모듈
+ * public/storage 폴더에 파일들이 저장이 되고 있음
+ */
 const multer = require('multer')
 const upload = multer({dest : 'public/storage'}) // 소스를 잘 설정해야함
 
-const webController = require('./web/webController');
 const apiUserController = require('./api/user/userController');
-const apiFeedController = require('./api/feed/feedController');
+const apiFeedController = require('./api/board/boardController');
 const fileController = require('./api/file/fileController')
 
 // 전체 적용 (router.get 보다 먼저 선언해야 사용 가능함!)
@@ -20,13 +22,6 @@ router.use(logging)
  */
 router.post('/api/file', upload.single('file'), fileController.upload);
 router.get('/api/file/:id', fileController.download);
-
-/**
- * webController (기본 페이지)
- */
-router.get('/', webController.home);
-router.get('/page/:page',webController.page);
-router.get('/sitemap',webController.sitemap);
 
 
 /**
