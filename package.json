@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "현장 프로젝트 백엔드 리포지토리",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TasteTour/backend.git"
+  },
+  "author": "전현준, CHOHYUNGJUNE",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TasteTour/backend/issues"
+  },
+  "homepage": "https://github.com/TasteTour/backend#readme"
+}
