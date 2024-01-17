@@ -1,15 +1,16 @@
 const { pool } = require('../../data/index')
 
 /**
- * 회원가입
- * @param email
- * @param paassword
- * @param name
+ * 회원 가입
+ * @param memberName
+ * @param memberEmail
+ * @param memberPhone
+ * @param memberPassword
  * @returns {Promise<unknown>}
  */
-exports.register = async (email, password, name) => {
-    const query = `INSERT INTO user (email, password, name)  VALUES (?,?,?)`;
-    return await pool(query, [email, password, name]);
+exports.register = async (memberName, memberEmail, memberPhone, memberPassword) => {
+    const query = `INSERT INTO member (memberName, memberEmail, memberPhone, memberPassword)  VALUES (?,?,?,?)`;
+    return await pool(query, [memberName, memberEmail, memberPhone, memberPassword]);
 }
 
 /**
@@ -30,13 +31,11 @@ exports.login = async (email, password) => {
  * @param email
  * @param paassword
  * @param name
- * @returns {Promise<unknown>}
+ * @returns false (중복된 이메일이 없다면)
  */
 exports.find = async (email) => {
-    const query = `SELECT count(*) FROM user WHERE email = ?`;
+    const query = `SELECT count(*) FROM member WHERE memberEmail = ?`;
     let result = await pool(query, [email]);
-    console.log(result);
-    console.log(result.length);
-    return (result.length <= 0) ? null : result.length;
+    return (result[0]['count(*)'] <= 0) ? false : true;
 
 }

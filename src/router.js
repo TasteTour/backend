@@ -73,9 +73,8 @@ router.get('/api/user/:id', apiUserController.userinfo);
  *                              $ref: '#/components/schemas/HttpResponse'
  *                          example:
  *                              code: 409
- *                              httpStatus: CONFLICT
+ *                              httpStatus: Conflict
  *                              message: 이메일 중복으로 회원 가입이 불가합니다!
- *                              data: {null}
  */
 router.post('/user/register', apiUserController.register);
 
