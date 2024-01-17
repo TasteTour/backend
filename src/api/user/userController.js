@@ -46,8 +46,6 @@ exports.login = async (req, res) => {
 
     let item = await repository.login(memberEmail, result.toString('base64'))
 
-    console.log(item)
-
     if(item == null){
         res.status(StatusCodes.UNAUTHORIZED)
         res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "이메일 또는 비밀번호가 틀립니다"})
@@ -66,7 +64,28 @@ exports.login = async (req, res) => {
     }
 }
 
-exports.userinfo = (req, res) => {
-    const id = req.params.id;
-    res.send(`${id} 님의 회원정보`);
+/**
+ * 로그아웃 하는 메소드
+ * @param header('Authorization')
+ * @param res
+ * @returns {Promise<void>}
+ */
+exports.logout = async (req, res) => {
+    const token = req.header('Authorization');
+    console.log(token)
+    try{
+        const {affectedRows} = await repository.addRevokedToken(token);
+        if (affectedRows > 0){
+            res.status(StatusCodes.OK)
+            res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: "정상적으로 로그아웃 되었습니다."})
+        }
+    }
+    catch (Error){
+        res.status(StatusCodes.UNAUTHORIZED)
+        res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "이미 폐기된 토큰입니다."})
+    }
+
+
+
+
 }

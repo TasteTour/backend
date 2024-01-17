@@ -26,8 +26,6 @@ router.get('/api/file/:id', fileController.download);
 /**
  * apiUserController (고객의 정보를 조회하는 Controller)
  */
-// 로깅 동시에 적용 가능함
-router.get('/api/user/:id', apiUserController.userinfo);
 
 /**
  * @swagger
@@ -136,6 +134,45 @@ router.post('/user/register', apiUserController.register);
  */
 router.post('/user/login', apiUserController.login);
 
+/**
+ * @swagger
+ *  /user/logout:
+ *      delete:
+ *          summary: 로그아웃
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - User
+ *
+ *          responses:
+ *              200:
+ *                  description: 로그인 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: OK
+ *                              message: 전현준님 로그인 되었습니다.
+ *                              data: {
+ *                                  memberName: 전현준,
+ *                                  memberEmail: "abc@tukorea.ac.kr",
+ *                                  memberPhone: "01012345688",
+ *                                  Authorization: "JWT token"
+ *                              }
+ *              401:
+ *                  description: 로그인 실패
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 401
+ *                              httpStatus: Unauthorized
+ *                              message: 이메일 또는 비밀번호가 틀립니다
+ */
+router.delete('/user/logout', verify, apiUserController.logout);
 
 /* ============================================================================== */
 

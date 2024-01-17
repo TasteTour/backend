@@ -4,30 +4,34 @@ const swaggereJsdoc = require("swagger-jsdoc");
 const options = {
     swaggerDefinition: {
         openapi: '3.0.0',
-        info: { // info 객체는 title, version, description을 설정
+        info: {
             title: "Taste Tour",
             version: "1.0.0",
             description: "2023 현장프로젝트 교과 맛탐험 정왕동 API 문서입니다.",
         },
-        /*
-        securityDefinitions: { // 헤더의 Authorization안에 값을 넣어줄수 있는 기능
-            Authorization: {
-                type: "apiKey",
-                name: "authorization",
-                scheme: "bearer",
-                in: "header",
+        components: {
+            securitySchemes: {
+                Authorization: {
+                    type: "apiKey",
+                    in: "header",
+                    name: "Authorization",
+                    scheme: "bearer",
+                    bearerFormat: "JWT"
+                },
             },
         },
-        security: [ // 헤더의 Authorization안에 값을 넣어줄수 있는 기능
+        security: [
             {
-                Authorization: [],
+                Authorization: [], // 전역적으로 토큰이 필요한 경우
             },
         ],
-        */
-        host: "localhost:3000",
-        basePath: "/",
+        servers: [
+            {
+                url: "http://localhost:3000/",
+            },
+        ],
     },
-    apis: ["./src/*.js", "./src/swagger/*"], // api는 /routes 파일 아래 js 파일 내에 정의하고 있으며, /swagger 폴더 아래 swagger 설정을 정의하고 있다
+    apis: ["./src/*.js", "./src/swagger/*"],
 };
 
 const specs = swaggereJsdoc(options);

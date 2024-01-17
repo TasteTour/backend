@@ -37,5 +37,27 @@ exports.find = async (email) => {
     const query = `SELECT count(*) FROM member WHERE memberEmail = ?`;
     let result = await pool(query, [email]);
     return (result[0]['count(*)'] <= 0) ? false : true;
+}
+
+/**
+ * 폐기된 토큰인지 확인하는 모듈
+ * @param token
+ * @returns false (폐기되지 않은 토큰이면)
+ */
+exports.isRevokedToken = async (token) => {
+    const query = `SELECT count(*) FROM revokedToken WHERE revokedTokenID = ?`;
+    let result = await pool(query, [token]);
+    console.log(result[0]['count(*)'] <= 0 ? false : true)
+    return (result[0]['count(*)'] <= 0) ? false : true;
+}
+
+/**
+ * 토큰을 폐기하는 모듈
+ * @param token
+ * @returns {Promise<unknown>}
+ */
+exports.addRevokedToken = async (token) => {
+    const query = `INSERT INTO revokedToken (revokedTokenID) VALUES (?)`;
+    return await pool(query, [token]);
 
 }
