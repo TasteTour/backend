@@ -18,13 +18,77 @@ const fileController = require('./api/file/fileController')
 // 전체 적용 (router.get 보다 먼저 선언해야 사용 가능함!)
 router.use(logging)
 
+/* ====================================================================================================== */
+/**
+ *  _______  __   __       _______
+ * |   ____||  | |  |     |   ____|
+ * |  |__   |  | |  |     |  |__
+ * |   __|  |  | |  |     |   __|
+ * |  |     |  | |  `----.|  |____
+ * |__|     |__| |_______||_______|
 
-router.post('/api/file', upload.single('file'), fileController.upload);
-router.get('/api/file/:id', fileController.download);
+ */
+
+/**
+ * @swagger
+ *  /file:
+ *      post:
+ *          summary: 이미지 등록하기
+ *          description: 글 등록하기 API 호출 후, 이 API를 호출해주세요!
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - File
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  multipart/form-data:
+ *                      schema:
+ *                          properties:
+ *                              File:
+ *                                  type: array
+ *                                  description: 이미지
+ *                      example:
+ *                          file: [1.jpg, 2.jpg]
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
+ *
+ *          responses:
+ *               201:
+ *                  description: 이미지 등록 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 201
+ *                              httpStatus: Created
+ *                              message: 이미지가 등록되었습니다.
+ *               500:
+ *                  description: 오류 발생
+ *                  content:
+ *                      multipart/form-data:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 이미지 등록 중 오류가 발생했습니다.
+ */
+router.post('/file/:boardNumber', upload.array('file'), fileController.upload);
 
 /* ============================================================================== */
 /**
- * apiUserController (고객의 정보를 조회하는 Controller)
+ *  __    __       _______. _______ .______
+ * |  |  |  |     /       ||   ____||   _  \
+ * |  |  |  |    |   (----`|  |__   |  |_)  |
+ * |  |  |  |     \   \    |   __|  |      /
+ * |  `--'  | .----)   |   |  |____ |  |\  \----.
+ *  \______/  |_______/    |_______|| _| `._____|
  */
 
 /**
@@ -184,7 +248,12 @@ router.delete('/user/logout', verify, apiUserController.logout);
 /* ============================================================================== */
 
 /**
- * apiBoardController (피드 CRUD 하는 부분)
+ * .______     ______        ___      .______       _______
+ * |   _  \   /  __  \      /   \     |   _  \     |       \
+ * |  |_)  | |  |  |  |    /  ^  \    |  |_)  |    |  .--.  |
+ * |   _  <  |  |  |  |   /  /_\  \   |      /     |  |  |  |
+ * |  |_)  | |  `--'  |  /  _____  \  |  |\  \----.|  '--'  |
+ * |______/   \______/  /__/     \__\ | _| `._____||_______/
  */
 
 /**
@@ -383,9 +452,9 @@ router.put('/board/:boardNumber', verify, apiBoardController.updateBoard);
  *          summary: 글 등록하기
  *          description: 이 API를 호출 한 뒤에 이미지를 등록하는 API도 호출하여 이미지는 따로 업로드 해주세요!
  *          security:
- *              - Authorization: []
+ *            - Authorization: []
  *          tags:
- *              - Board
+ *            - Board
  *          requestBody:
  *              required: true
  *              content:
@@ -407,7 +476,7 @@ router.put('/board/:boardNumber', verify, apiBoardController.updateBoard);
  *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
  *
  *          responses:
- *              201:
+ *               201:
  *                  description: 글 등록 성공
  *                  content:
  *                      application/json:
