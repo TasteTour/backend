@@ -23,7 +23,9 @@ exports.register = async (req, res) => {
     const result = await crypto.pbkdf2Sync(memberPassword, process.env.SALT_KEY,50,100, 'sha512')
     const {affectedRows} = await repository.register(memberName, memberEmail, memberPhone, result.toString('base64'));
 
-    let token = await jwt.jwtSign({id : memberEmail});
+    const memberNumber = await repository.findMemberNumber(memberEmail)
+
+    let token = await jwt.jwtSign({id : memberNumber});
 
     // 정상적으로 회원가입 되었으면
     if (affectedRows > 0){
@@ -54,7 +56,7 @@ exports.login = async (req, res) => {
         res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "이메일 또는 비밀번호가 틀립니다"})
     }
     else {
-        let token = await jwt.jwtSign({id : memberEmail});
+        let token = await jwt.jwtSign({id : memberNumber});
         const data = {
             memberName: item.memberName,
             memberEmail: item.memberEmail,

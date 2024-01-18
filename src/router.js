@@ -308,7 +308,7 @@ router.get('/board/latest', verify, apiBoardController.readLatestBoards);
  *                                          boardComment: 0,
  *                                          memberNumber: 4                                      }
  *                                  ]
- *              500:
+ *              401:
  *                  description: 최신 순 조회 실패
  *                  content:
  *                      application/json:
@@ -321,6 +321,45 @@ router.get('/board/latest', verify, apiBoardController.readLatestBoards);
  */
 router.get('/board/popular', verify, apiBoardController.readPopularBoards);
 
-
+/**
+ * @swagger
+ *  /board/:boardNumber:
+ *      put:
+ *          summary: 글 수정하기
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - Board
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
+ *
+ *          responses:
+ *              201:
+ *                  description: 글 수정 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 201
+ *                              httpStatus: Created
+ *                              message: 팔각도 글이 수정되었습니다.
+ *
+ *              401:
+ *                  description: 글 수정에 대한 권한 없음
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 401
+ *                              httpStatus: Unauthorized
+ *                              message: 글 작성자만 글 수정이 가능합니다.
+ */
+router.put('/board/:boardNumber', apiBoardController.updateBoard);
 
 module.exports = router;

@@ -29,14 +29,23 @@ exports.login = async (memberEmail, memberPassword) => {
 /**
  * 이메일 입력하여 일치하는 회원 찾기
  * @param email
- * @param paassword
- * @param name
  * @returns false (중복된 이메일이 없다면)
  */
 exports.find = async (email) => {
     const query = `SELECT count(*) FROM member WHERE memberEmail = ?`;
     let result = await pool(query, [email]);
     return (result[0]['count(*)'] <= 0) ? false : true;
+}
+
+/**
+ * 이메일 입력하여 회원번호 검색
+ * @param email
+ * @returns 4 (회원번호)
+ */
+exports.findMemberNumber = async (email) => {
+    const query = `SELECT memberNumber FROM member WHERE memberEmail = ?`;
+    let result = await pool(query, [email]);
+    return (result.length < 0) ? null : result[0];
 }
 
 /**

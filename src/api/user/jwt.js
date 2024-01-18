@@ -19,3 +19,14 @@ exports.jwtSign = (payload, callback) => {
              });
      })
 }
+
+exports.jwtVerify = (token) => {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, privateKey, (err, decoded) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(decoded);
+        });
+    });
+}

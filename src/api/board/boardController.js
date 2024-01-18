@@ -1,10 +1,11 @@
 const repository = require('./boardRepository')
 const crypto = require('crypto')
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
+const {jwtVerify} = require("../user/jwt");
 
 /**
  * 최신순으로 글 조회하기
- * @apiNote DB 오류 발생 시 404 오류 발생
+ * @apiNote DB 오류 발생 시 500 오류 발생
  * @apiNote 글은 Array 형태로 반환함
  * [
  *  {
@@ -29,6 +30,12 @@ exports.readLatestBoards = async (req, res) => {
     }
 }
 
+/**
+ * 인기순으로 글 조회하기
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
 exports.readPopularBoards = async (req, res) => {
     let item = await repository.readPopularBoards();
 
@@ -42,48 +49,21 @@ exports.readPopularBoards = async (req, res) => {
     }
 }
 
-exports.login = async (req, res) => {
-    let {memberEmail, memberPassword} = req.body;
-    let result = crypto.pbkdf2Sync(memberPassword, process.env.SALT_KEY, 50, 100, 'sha512')
+exports.updateBoard = async (req, res) => {
+    let { boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent } = req.body
+    let boardNumber = req.param.boardNumber;
+    let token = req.header.Authorization;
+    let memberNumber = await jwtVerify(token);
 
-    let item = await repository.login(memberEmail, result.toString('base64'))
+    let { changedRows } = await repository.updateBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber);
 
-    if(item == null){
+    // DB에 잘 등록되었다면
+    if(changedRows === 1){
+        res.status(StatusCodes.CREATED)
+        res.send({ code: StatusCodes.CREATED, httpStatus: ReasonPhrases.CREATED, message: `${boardTitle} 글이 수정되었습니다.`})
+    }
+    else{
         res.status(StatusCodes.UNAUTHORIZED)
-        res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "이메일 또는 비밀번호가 틀립니다"})
-    }
-    else {
-        let token = await jwt.jwtSign({id : memberEmail});
-        const data = {
-            memberName: item.memberName,
-            memberEmail: item.memberEmail,
-            memberPhone: item.memberPhone,
-            Authorization: token
-        }
-        res.status(StatusCodes.OK)
-        return res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: `${item.memberName}님 로그인 되었습니다.`, data: data});
-
-    }
-}
-
-/**
- * 로그아웃 하는 메소드
- * @param header('Authorization')
- * @param res
- * @returns {Promise<void>}
- */
-exports.logout = async (req, res) => {
-    const token = req.header('Authorization');
-    console.log(token)
-    try{
-        const {affectedRows} = await repository.addRevokedToken(token);
-        if (affectedRows > 0){
-            res.status(StatusCodes.OK)
-            res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: "정상적으로 로그아웃 되었습니다."})
-        }
-    }
-    catch (Error){
-        res.status(StatusCodes.UNAUTHORIZED)
-        res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "이미 폐기된 토큰입니다."})
+        res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "글 작성자만 글 수정이 가능합니다."})
     }
 }

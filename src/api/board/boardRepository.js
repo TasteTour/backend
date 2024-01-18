@@ -33,13 +33,19 @@ exports.writeBoard = async () => {
 
 /**
  * 글 수정하기
- * TODO 수정된 부분만 담아서 값 넣기
+ * 변경할 수 있는 부분 : 제목, 별점, 카테고리, 위치, 내용
  * @returns {Promise<boolean>}
  */
-exports.updateBoard = async () => {
-    const query = ``;
-    let result = await pool(query, []);
-    // return (result[0]['count(*)'] <= 0) ? false : true;
+exports.updateBoard = async (boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber) => {
+    const query = `UPDATE board SET 
+                                    boardTitle = IFNULL(?, boardTitle),
+                                    boardStar = IFNULL(?, boardStar),
+                                    boardCategory = IFNULL(?, boardCategory),
+                                    boardStoreLocation = IFNULL(?, boardStoreLocation),
+                                    boardContent = IFNULL(?, boardContent)  
+                        WHERE boardNumber = ? and memberNumber = ?`;
+    let result = await pool(query, [boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber]);
+    return result;
 }
 
 /**
