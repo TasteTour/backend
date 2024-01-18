@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const jwt = require('jsonwebtoken');
-const {isRevokedToken} = require("../api/user/repository");
+const {isRevokedToken} = require("../api/user/userRepository");
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 const privatekey = process.env.JWT_KEY;
 

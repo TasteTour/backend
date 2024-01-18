@@ -1,41 +1,87 @@
+const repository = require('./boardRepository')
+const crypto = require('crypto')
+const { StatusCodes, ReasonPhrases } = require('http-status-codes');
+const {jwtVerify} = require("../user/jwt");
+
 /**
- * 피드 목록 조회 (GET)
- * query 방식 
+ * 최신순으로 글 조회하기
+ * @apiNote DB 오류 발생 시 500 오류 발생
+ * @apiNote 글은 Array 형태로 반환함
+ * [
+ *  {
+ *      boardNumber: 2, ...
+ *  },
+ *  {
+ *      boardNumber: 1, ...
+ *  }
+ * ]
  */
-exports.index = (req, res) => {
-    const query = req.query
-    res.send(query);
+exports.readLatestBoards = async (req, res) => {
+
+    let item = await repository.readLatestBoards();
+
+    if(item == null){
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "글 최신 순 조회 중에 오류가 발생했습니다"})
+    }
+    else{
+        res.status(StatusCodes.OK)
+        res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: "글 최신순 조회입니다.", data: item})
+    }
 }
 
 /**
- * 피드 게시글 등록 (POST)
- * body 방식
+ * 인기순으로 글 조회하기
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
  */
-exports.store = (req, res) => {
-    const body = req.body;
-    res.send(body);
+exports.readPopularBoards = async (req, res) => {
+    let item = await repository.readPopularBoards();
+
+    if(item == null){
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "글 인기 순 조회 중에 오류가 발생했습니다"})
+    }
+    else{
+        res.status(StatusCodes.OK)
+        res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: "글 인기순 조회입니다.", data: item})
+    }
 }
 
-/**
- * 피드 상세 조회 (GET)
- */
-exports.show = (req, res) => {
-    const id = req.params.id;
-    res.send(`${id} 피드 조회`);
+exports.updateBoard = async (req, res) => {
+    let { boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent } = req.body
+    let boardNumber = req.param.boardNumber;
+    let token = req.header.Authorization;
+    let memberNumber = await jwtVerify(token);
+
+    let { changedRows } = await repository.updateBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber);
+
+    // DB에 잘 등록되었다면
+    if(changedRows === 1){
+        res.status(StatusCodes.OK)
+        res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: `${boardTitle} 글이 수정되었습니다.`})
+    }
+    else{
+        res.status(StatusCodes.UNAUTHORIZED)
+        res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "글 작성자만 글 수정이 가능합니다."})
+    }
 }
 
-/**
- * 피드 업데이트 (POST)
- */
-exports.update = (req, res) => {
-    const id = req.params.id;
-    res.send(`${id} 피드 수정`);
-}
+exports.writeBoard = async (req, res) => {
+    let { boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent } = req.body
+    let token = req.header.Authorization;
+    let memberNumber = await jwtVerify(token); //token을 Decoding하면 회원 번호가 나옵니다
 
-/**
- * 피드 삭제 (POST)
- */
-exports.destroy = (req, res) => {
-    const id = req.params.id;
-    res.send(`${id} 피드 삭제`);
+    let { affectedRows } = await repository.writeBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber);
+
+    if (affectedRows > 0){
+        res.status(StatusCodes.CREATED)
+        res.send({ code: StatusCodes.CREATED, httpStatus: ReasonPhrases.CREATED, message: "정상적으로 글이 등록되었습니다."})
+    }
+    else{
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "글 등록 중 오류가 발생했습니다"})
+    }
+
 }

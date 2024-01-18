@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 3000;
 const { swaggerUi, specs } = require('./src/middleware/swagger');
+const {boardAddComment} = require("./src/api/board/boardRepository");
 
 
 // post 처리를 위한 body Parser
@@ -23,3 +24,5 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.listen(port, () => {
     console.log(`서버 실행 중 ${port}`)
 })
+
+boardAddComment(1);
