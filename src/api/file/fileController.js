@@ -1,4 +1,4 @@
-const repository = require('./repository')
+const repository = require('./fileRepository')
 
 // 파일 업로드를 위한 함수
 exports.upload = async (req, res) => {
