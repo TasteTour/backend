@@ -23,12 +23,15 @@ exports.register = async (req, res) => {
     const result = await crypto.pbkdf2Sync(memberPassword, process.env.SALT_KEY,50,100, 'sha512')
     const {affectedRows} = await repository.register(memberName, memberEmail, memberPhone, result.toString('base64'));
 
+    let token = await jwt.jwtSign({id : memberEmail});
+
     // 정상적으로 회원가입 되었으면
     if (affectedRows > 0){
         const data = {
             memberName: memberName,
             memberEmail: memberEmail,
-            memberPhone: memberPhone
+            memberPhone: memberPhone,
+            token: token
         }
         res.status(StatusCodes.CREATED)
         return res.send({ code: StatusCodes.CREATED, httpStatus: ReasonPhrases.CREATED, message: "회원가입 성공했습니다!", data: data});

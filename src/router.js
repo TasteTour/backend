@@ -61,7 +61,8 @@ router.get('/api/file/:id', fileController.download);
  *                              data: {
  *                                  memberName: 전현준,
  *                                  memberEmail: "abc@tukorea.ac.kr",
- *                                  memberPhone: "01012345688"
+ *                                  memberPhone: "01012345688",
+ *                                  token : "jkasfbkvjdbsrhggkjSck2"
  *                              }
  *              409:
  *                  description: 이메일 중복으로 인한 회원 가입 불가
@@ -185,8 +186,68 @@ router.delete('/user/logout', verify, apiUserController.logout);
 /**
  * apiFeedController (피드 CRUD 하는 부분)
  */
-// middleware로 jwt 인증을 보냄
-router.get('/api/feed', verify, apiFeedController.index);
+
+/**
+ * @swagger
+ *  /board:
+ *      get:
+ *          summary: 피드 조회하기
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - Board
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
+ *
+ *          responses:
+ *              200:
+ *                  description: 조회 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: OK
+ *                              message: 피드 조회 되었습니다.
+ *                              data: {
+ *                                  [{
+ *                                      boardNumber: 1,
+ *                                      boardTitle: 팔각도,
+ *                                      boardStar : 4,
+ *                                      boardCategoru: 한식,
+ *                                      boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                      boardContent: 뭐라는거야?,
+ *                                      boardViews: 352,
+ *
+ *                                  },
+ *                                  {
+ *                                      boardNumber: 1,
+ *                                      boardTitle: 팔각도,
+ *                                      boardStar : 4,
+ *                                      boardCategoru: 한식,
+ *                                      boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                      boardContent: 뭐라는거야?,
+ *                                      boardViews: 352,
+ *
+ *                                  }]
+ *                              }
+ *              401:
+ *                  description: 로그인 실패
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 401
+ *                              httpStatus: Unauthorized
+ *                              message: 이메일 또는 비밀번호가 틀립니다
+ */
+router.get('/board', verify, apiFeedController.index);
 router.post('/api/feed', verify, apiFeedController.store);
 router.get('/api/feed/:id', verify, apiFeedController.show);
 router.post('/api/feed/:id', verify, apiFeedController.update);
