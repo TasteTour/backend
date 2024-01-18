@@ -20,8 +20,8 @@ exports.readLatestBoards = async (req, res) => {
     let item = await repository.readLatestBoards();
 
     if(item == null){
-        res.status(StatusCodes.NOT_FOUND)
-        res.send({ code: StatusCodes.NOT_FOUND, httpStatus: ReasonPhrases.NOT_FOUND, message: "글 최신 순 조회 중에 오류가 발생했습니다"})
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "글 최신 순 조회 중에 오류가 발생했습니다"})
     }
     else{
         res.status(StatusCodes.OK)
@@ -29,6 +29,18 @@ exports.readLatestBoards = async (req, res) => {
     }
 }
 
+exports.readPopularBoards = async (req, res) => {
+    let item = await repository.readPopularBoards();
+
+    if(item == null){
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "글 인기 순 조회 중에 오류가 발생했습니다"})
+    }
+    else{
+        res.status(StatusCodes.OK)
+        res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: "글 인기순 조회입니다.", data: item})
+    }
+}
 
 exports.login = async (req, res) => {
     let {memberEmail, memberPassword} = req.body;

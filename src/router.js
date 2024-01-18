@@ -184,14 +184,14 @@ router.delete('/user/logout', verify, apiUserController.logout);
 /* ============================================================================== */
 
 /**
- * apiFeedController (피드 CRUD 하는 부분)
+ * apiBoardController (피드 CRUD 하는 부분)
  */
 
 /**
  * @swagger
- *  /board:
+ *  /board/latest:
  *      get:
- *          summary: 피드 조회하기
+ *          summary: 피드 최신 순 조회하기 (boardNumber 내림차순)
  *          security:
  *              - Authorization: []
  *          tags:
@@ -214,43 +214,113 @@ router.delete('/user/logout', verify, apiUserController.logout);
  *                              code: 200
  *                              httpStatus: OK
  *                              message: 피드 조회 되었습니다.
- *                              data: {
- *                                  [{
- *                                      boardNumber: 1,
- *                                      boardTitle: 팔각도,
- *                                      boardStar : 4,
- *                                      boardCategoru: 한식,
- *                                      boardStoreLocation: 경기도 시흥시 정왕동 3,
- *                                      boardContent: 뭐라는거야?,
- *                                      boardViews: 352,
- *
- *                                  },
- *                                  {
- *                                      boardNumber: 1,
- *                                      boardTitle: 팔각도,
- *                                      boardStar : 4,
- *                                      boardCategoru: 한식,
- *                                      boardStoreLocation: 경기도 시흥시 정왕동 3,
- *                                      boardContent: 뭐라는거야?,
- *                                      boardViews: 352,
- *
- *                                  }]
- *                              }
- *              401:
- *                  description: 로그인 실패
+ *                              data: [
+ *                                     {
+ *                                          boardNumber: 2,
+ *                                          boardTitle: 팔각도,
+ *                                          boardStar : 4,
+ *                                          boardCategoru: 한식,
+ *                                          boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                          boardContent: 뭐라는거야?,
+ *                                          boardViews: 352,
+ *                                          boardCreated: "2024-01-18T10:56:44.000Z",
+ *                                          boardUpdated: null,
+ *                                          boardComment: 0,
+ *                                          memberNumber: 4
+ *                                      },
+ *                                      {
+ *                                          boardNumber: 1,
+ *                                          boardTitle: 팔각도,
+ *                                          boardStar : 4,
+ *                                          boardCategoru: 한식,
+ *                                          boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                          boardContent: 뭐라는거야?,
+ *                                          boardViews: 352,
+ *                                          boardCreated: "2024-01-18T10:56:44.000Z",
+ *                                          boardUpdated: null,
+ *                                          boardComment: 0,
+ *                                          memberNumber: 4                                      }
+ *                                  ]
+ *              500:
+ *                  description: 최신 순 조회 실패
  *                  content:
  *                      application/json:
  *                          schema:
  *                              $ref: '#/components/schemas/HttpResponse'
  *                          example:
- *                              code: 401
- *                              httpStatus: Unauthorized
- *                              message: 이메일 또는 비밀번호가 틀립니다
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 글 최신 순 조회 중에 오류가 발생했습니다
  */
-router.get('/board/read/latest', apiBoardController.readLatestBoards);
-// router.post('/api/feed', verify, apiBoardController.store);
-// router.get('/api/feed/:id', verify, apiBoardController.show);
-// router.post('/api/feed/:id', verify, apiBoardController.update);
-// router.post('/api/feed/:id/delete', verify, apiBoardController.destroy);
+router.get('/board/latest', verify, apiBoardController.readLatestBoards);
+
+/**
+ * @swagger
+ *  /board/popular:
+ *      get:
+ *          summary: 피드 인기 순 조회하기 (댓글 + 조회수 * 10)
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - Board
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
+ *
+ *          responses:
+ *              200:
+ *                  description: 조회 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: OK
+ *                              message: 피드 조회 되었습니다.
+ *                              data: [
+ *                                      {
+ *                                          boardNumber: 2,
+ *                                          boardTitle: 팔각도,
+ *                                          boardStar : 4,
+ *                                          boardCategoru: 한식,
+ *                                          boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                          boardContent: 뭐라는거야?,
+ *                                          boardViews: 352,
+ *                                          boardCreated: "2024-01-18T10:56:44.000Z",
+ *                                          boardUpdated: null,
+ *                                          boardComment: 0,
+ *                                          memberNumber: 4
+ *                                      },
+ *                                      {
+ *                                          boardNumber: 1,
+ *                                          boardTitle: 팔각도,
+ *                                          boardStar : 4,
+ *                                          boardCategoru: 한식,
+ *                                          boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                          boardContent: 뭐라는거야?,
+ *                                          boardViews: 352,
+ *                                          boardCreated: "2024-01-18T10:56:44.000Z",
+ *                                          boardUpdated: null,
+ *                                          boardComment: 0,
+ *                                          memberNumber: 4                                      }
+ *                                  ]
+ *              500:
+ *                  description: 최신 순 조회 실패
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 글 최신 순 조회 중에 오류가 발생했습니다
+ */
+router.get('/board/popular', verify, apiBoardController.readPopularBoards);
+
+
 
 module.exports = router;
