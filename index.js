@@ -24,5 +24,3 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.listen(port, () => {
     console.log(`서버 실행 중 ${port}`)
 })
-
-boardAddComment(1);
