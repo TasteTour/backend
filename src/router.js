@@ -12,7 +12,7 @@ const multer = require('multer')
 const upload = multer({dest: 'public/storage'}) // 소스를 잘 설정해야함
 
 const apiUserController = require('./api/user/userController');
-const apiFeedController = require('./api/board/boardController');
+const apiBoardController = require('./api/board/boardController');
 const fileController = require('./api/file/fileController')
 
 // 전체 적용 (router.get 보다 먼저 선언해야 사용 가능함!)
@@ -247,10 +247,10 @@ router.delete('/user/logout', verify, apiUserController.logout);
  *                              httpStatus: Unauthorized
  *                              message: 이메일 또는 비밀번호가 틀립니다
  */
-router.get('/board', verify, apiFeedController.index);
-router.post('/api/feed', verify, apiFeedController.store);
-router.get('/api/feed/:id', verify, apiFeedController.show);
-router.post('/api/feed/:id', verify, apiFeedController.update);
-router.post('/api/feed/:id/delete', verify, apiFeedController.destroy);
+router.get('/board/read/latest', apiBoardController.readLatestBoards);
+// router.post('/api/feed', verify, apiBoardController.store);
+// router.get('/api/feed/:id', verify, apiBoardController.show);
+// router.post('/api/feed/:id', verify, apiBoardController.update);
+// router.post('/api/feed/:id/delete', verify, apiBoardController.destroy);
 
 module.exports = router;

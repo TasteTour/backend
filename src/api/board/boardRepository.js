@@ -1,12 +1,13 @@
 const { pool } = require('../../data/index')
 
 /**
- * 최신 순으로 글 불러오기
+ * 최신 순으로 글 불러오기 (boardNumber의 내림차순)
+ * Array Type?
  * @returns {Promise<unknown>}
  */
 exports.readLatestBoards = async () => {
-    const query = `INSERT INTO member (memberName, memberEmail, memberPhone, memberPassword)  VALUES (?,?,?,?)`;
-    return await pool(query, [memberName, memberEmail, memberPhone, memberPassword]);
+    const query = `SELECT * FROM board ORDER BY boardNumber desc`;
+    return await pool(query);
 }
 
 /**
