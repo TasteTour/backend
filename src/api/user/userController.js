@@ -56,6 +56,7 @@ exports.login = async (req, res) => {
         res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "이메일 또는 비밀번호가 틀립니다"})
     }
     else {
+        const memberNumber = await repository.findMemberNumber(memberEmail);
         let token = await jwt.jwtSign({id : memberNumber});
         const data = {
             memberName: item.memberName,
