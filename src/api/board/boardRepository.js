@@ -26,9 +26,8 @@ exports.readPopularityBoards = async () => {
  * @returns {Promise<boolean>}
  */
 exports.writeBoard = async () => {
-    const query = ``;
-    let result = await pool(query, [token]);
-    // return (result[0]['count(*)'] <= 0) ? false : true;
+    const query = `INSERT INTO board (boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber)  VALUES (?,?,?,?)`;
+    return await pool(query, [token]);
 }
 
 /**

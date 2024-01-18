@@ -38,3 +38,37 @@ components:
         memberPassword:
           type: string
           description: password
+    BoardUpdate:
+      properties:
+        boardTitle:
+          type: string
+          description: 식당 이름
+        boardStar:
+          type: int
+          description: 4
+        boardCategory:
+          type: string
+          description: 카테고리
+        boardStoreLocation:
+          type: string
+          description: 식당 위치
+        boardContent:
+          type: string
+          description: 글 내용
+    BoardWrite:
+      properties:
+        boardTitle:
+          type: string
+          description: 식당 이름
+        boardStar:
+          type: int
+          description: 4
+        boardCategory:
+          type: string
+          description: 카테고리
+        boardStoreLocation:
+          type: string
+          description: 식당 위치
+        boardContent:
+          type: string
+          description: 글 내용

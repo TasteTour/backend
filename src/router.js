@@ -326,10 +326,24 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
  *  /board/:boardNumber:
  *      put:
  *          summary: 글 수정하기
+ *          description: requestBody에서 5가지 중 수정하고 싶은거만 보내주세요! 다 보내셔도 됩니다.
  *          security:
  *              - Authorization: []
  *          tags:
  *              - Board
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/BoardUpdate'
+ *                      example:
+ *                          boardTitle: 식당 이름
+ *                          boardStar: 5
+ *                          boardCategory: 일식
+ *                          boardStoreLocation: 경기도 시흥시 정왕동 한국공학대 E동 1층
+ *                          boardContent: 교수 식당 맛없어요
  *          parameters:
  *            - in: header
  *              name: Authorization
@@ -338,15 +352,15 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
  *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
  *
  *          responses:
- *              201:
+ *              200:
  *                  description: 글 수정 성공
  *                  content:
  *                      application/json:
  *                          schema:
  *                              $ref: '#/components/schemas/HttpResponse'
  *                          example:
- *                              code: 201
- *                              httpStatus: Created
+ *                              code: 200
+ *                              httpStatus: Ok
  *                              message: 팔각도 글이 수정되었습니다.
  *
  *              401:
@@ -360,6 +374,61 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
  *                              httpStatus: Unauthorized
  *                              message: 글 작성자만 글 수정이 가능합니다.
  */
-router.put('/board/:boardNumber', apiBoardController.updateBoard);
+router.put('/board/:boardNumber', verify, apiBoardController.updateBoard);
+
+/**
+ * @swagger
+ *  /board:
+ *      post:
+ *          summary: 글 등록하기
+ *          description: 이 API를 호출 한 뒤에 이미지를 등록하는 API도 호출하여 이미지는 따로 업로드 해주세요!
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - Board
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/BoardWrite'
+ *                      example:
+ *                          boardTitle: 식당 이름
+ *                          boardStar: 5
+ *                          boardCategory: 일식
+ *                          boardStoreLocation: 경기도 시흥시 정왕동 한국공학대 E동 1층
+ *                          boardContent: 교수 식당 맛없어요
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
+ *
+ *          responses:
+ *              201:
+ *                  description: 글 등록 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 201
+ *                              httpStatus: Created
+ *                              message: 식당 이름 글이 등록되었습니다.
+ *               500:
+ *                  description: 오류 발생
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 글 등록 중 오류가 발생했습니다.
+ */
+router.post('/board', verify, apiBoardController.writeBoard);
+
 
 module.exports = router;

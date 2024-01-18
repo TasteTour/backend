@@ -59,11 +59,29 @@ exports.updateBoard = async (req, res) => {
 
     // DB에 잘 등록되었다면
     if(changedRows === 1){
-        res.status(StatusCodes.CREATED)
-        res.send({ code: StatusCodes.CREATED, httpStatus: ReasonPhrases.CREATED, message: `${boardTitle} 글이 수정되었습니다.`})
+        res.status(StatusCodes.OK)
+        res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: `${boardTitle} 글이 수정되었습니다.`})
     }
     else{
         res.status(StatusCodes.UNAUTHORIZED)
         res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "글 작성자만 글 수정이 가능합니다."})
     }
+}
+
+exports.writeBoard = async (req, res) => {
+    let { boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent } = req.body
+    let token = req.header.Authorization;
+    let memberNumber = await jwtVerify(token); //token을 Decoding하면 회원 번호가 나옵니다
+
+    let { affectedRows } = await repository.writeBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber);
+
+    if (affectedRows > 0){
+        res.status(StatusCodes.CREATED)
+        res.send({ code: StatusCodes.CREATED, httpStatus: ReasonPhrases.CREATED, message: "정상적으로 글이 등록되었습니다."})
+    }
+    else{
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "글 등록 중 오류가 발생했습니다"})
+    }
+
 }
