@@ -37,7 +37,7 @@ exports.readLatestBoards = async (req, res) => {
  * @returns {Promise<void>}
  */
 exports.readPopularBoards = async (req, res) => {
-    let item = await repository.readPopularBoards();
+    let item = await repository.readPopularityBoards();
 
     if(item == null){
         res.status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -144,7 +144,7 @@ exports.readBoardDetails = async (req, res) => {
  * 게시글 삭제
  */
 exports.deleteBoard = async (req, res) => {
-    let { boardNumber } = req.body
+    let boardNumber = req.param.boardNumber;
     let token = req.header.Authorization;
     let memberNumber = await jwtVerify(token); //token을 Decoding하면 회원 번호가 나옵니다
 
