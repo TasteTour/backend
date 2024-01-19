@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
 
     const memberNumber = await repository.findMemberNumber(memberEmail)
 
-    let token = await jwt.jwtSign({id : memberNumber});
+    let token = await jwt.jwtSign({id : memberNumber.memberNumber});
 
     // 정상적으로 회원가입 되었으면
     if (affectedRows > 0){
@@ -57,7 +57,7 @@ exports.login = async (req, res) => {
     }
     else {
         const memberNumber = await repository.findMemberNumber(memberEmail);
-        let token = await jwt.jwtSign({id : memberNumber});
+        let token = await jwt.jwtSign({memberNumber : memberNumber.memberNumber});
         const data = {
             memberName: item.memberName,
             memberEmail: item.memberEmail,
