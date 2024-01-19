@@ -1,7 +1,7 @@
 const repository = require('./boardRepository')
 const crypto = require('crypto')
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
-const {jwtVerify} = require("../user/jwt");
+const jwt = require("../user/jwt");
 
 /**
  * 최신순으로 글 조회하기
@@ -51,11 +51,17 @@ exports.readPopularBoards = async (req, res) => {
 
 exports.updateBoard = async (req, res) => {
     let { boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent } = req.body
-    let boardNumber = req.param.boardNumber;
-    let token = req.header.Authorization;
-    let memberNumber = await jwtVerify(token);
+    let boardNumber = req.params['boardNumber'];
+    let token = req.headers['authorization'];
+    let memberNumber;
 
-    let { changedRows } = await repository.updateBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber);
+    // memberNumber에 접근하는 방법
+    await jwt.jwtVerify(token).then(decoded => {
+        memberNumber = decoded.decoded.payload.memberNumber;
+    })
+
+    let {changedRows} = await repository.updateBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber);
+
 
     // DB에 잘 등록되었다면
     if(changedRows === 1){
@@ -63,17 +69,22 @@ exports.updateBoard = async (req, res) => {
         res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: `${boardTitle} 글이 수정되었습니다.`})
     }
     else{
-        res.status(StatusCodes.UNAUTHORIZED)
-        res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "글 작성자만 글 수정이 가능합니다."})
+        res.status(StatusCodes.NOT_FOUND)
+        res.send({ code: StatusCodes.NOT_FOUND, httpStatus: ReasonPhrases.NOT_FOUND, message: "변경된 내용이 없습니다."})
     }
 }
 
 exports.writeBoard = async (req, res) => {
     let { boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent } = req.body
-    let token = req.header.Authorization;
-    let memberNumber = await jwtVerify(token); //token을 Decoding하면 회원 번호가 나옵니다
+    let token = req.headers['authorization'];
+    let memberNumber;
 
-    let { affectedRows } = await repository.writeBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, boardNumber, memberNumber);
+    // memberNumber에 접근하는 방법
+    await jwt.jwtVerify(token).then(decoded => {
+        memberNumber = decoded.decoded.payload.memberNumber;
+    })
+
+    let { affectedRows } = await repository.writeBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, memberNumber);
 
     if (affectedRows > 0){
         res.status(StatusCodes.CREATED)

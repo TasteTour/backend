@@ -9,7 +9,7 @@ const privateKey = process.env.JWT_KEY;
  */
 exports.jwtSign = (payload, callback) => {
      return new Promise((resolve, reject) => {
-         jwt.sign({ foo: 'bar' }, privateKey,
+         jwt.sign({payload}, privateKey,
              { expiresIn: '6h' },
              function (err, token) {
                  if(err){
@@ -26,7 +26,7 @@ exports.jwtVerify = (token) => {
             if (err) {
                 reject(err);
             }
-            resolve(decoded);
+            resolve({decoded});
         });
     });
 }

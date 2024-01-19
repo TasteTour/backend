@@ -392,7 +392,7 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
 
 /**
  * @swagger
- *  /board/:boardNumber:
+ *  /board/{boardNumber}:
  *      put:
  *          summary: 글 수정하기
  *          description: requestBody에서 5가지 중 수정하고 싶은거만 보내주세요! 다 보내셔도 됩니다.
@@ -419,7 +419,10 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
  *              schema:
  *                  type: string
  *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
- *
+ *            - in: path
+ *              name: boardNumber
+ *              schema:
+ *                  type: int
  *          responses:
  *              200:
  *                  description: 글 수정 성공
@@ -432,16 +435,16 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
  *                              httpStatus: Ok
  *                              message: 팔각도 글이 수정되었습니다.
  *
- *              401:
+ *              404:
  *                  description: 글 수정에 대한 권한 없음
  *                  content:
  *                      application/json:
  *                          schema:
  *                              $ref: '#/components/schemas/HttpResponse'
  *                          example:
- *                              code: 401
- *                              httpStatus: Unauthorized
- *                              message: 글 작성자만 글 수정이 가능합니다.
+ *                              code: 404
+ *                              httpStatus: Not Found
+ *                              message: 변경된 내용이 없습니다.
  */
 router.put('/board/:boardNumber', verify, apiBoardController.updateBoard);
 
