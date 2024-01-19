@@ -97,7 +97,7 @@ exports.writeComment = async (req, res) => {
             console.error(error);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
                 code: StatusCodes.INTERNAL_SERVER_ERROR,
-                httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR,
+                httpStatus: ReasonPhraseINTERNAL_SERVER_ERROR,
                 message: error.message
             });
         }
