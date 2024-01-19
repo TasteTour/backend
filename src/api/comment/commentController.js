@@ -47,7 +47,7 @@ exports.writeComment = async (req, res) => {
                 return res.status(StatusCodes.BAD_REQUEST).send({message: "댓글을 다시 작성해주세요.(100자 이내)"});
             }
 
-            let commentNumber = req.param.commentNumber;
+            let commentNumber = req.param;
             let token = req.header.Authorization;
             let memberNumber = await jwtVerify(token);
 
@@ -78,7 +78,7 @@ exports.writeComment = async (req, res) => {
     exports.deleteComment = async (req, res) => {
         try {
             let {boardNumber} = req.body;
-            let commentNumber = req.param.commentNumber;
+            let commentNumber = req.param;
             let token = req.header.Authorization;
             let memberNumber = await jwtVerify(token); //token을 Decoding하면 회원 번호가 나옵니다
 
