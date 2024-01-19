@@ -499,5 +499,159 @@ router.put('/board/:boardNumber', verify, apiBoardController.updateBoard);
  */
 router.post('/board', verify, apiBoardController.writeBoard);
 
+/**
+ * @swagger
+ *  /board/search:
+ *      get:
+ *          summary: 상호명 검색
+ *          description: 상호명으로 검색하기
+ *          security:
+ *            - Authorization: []
+ *          tags:
+ *            - Board
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/BoardSearchByRestaurantName'
+ *                      example:
+ *                          boardTitle: 식당 이름
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 게시글 이름(상호명)을 넣어주세요.
+ *
+ *          responses:
+ *               201:
+ *                  description: 상호명으로 게시글 검색 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 201
+ *                              httpStatus: Created
+ *                              message: 상호명으로 게시글 검색이 완료되었습니다.
+ *               500:
+ *                  description: 오류 발생
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 상호명으로 게시글 검색 중 오류가 발생했습니다.
+ */
+// 게시글 상호명 검색
+router.get('/board/search', verify, apiBoardController.searchBoardByRestaurantName);
+
+/**
+ * @swagger
+ *  /board/search:
+ *      get:
+ *          summary: 글 상세 검색
+ *          description: 글 ID로 상세 조회하기
+ *          security:
+ *            - Authorization: []
+ *          tags:
+ *            - Board
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/BoardReadDetails'
+ *                      example:
+ *                          boardNumber: 글 ID
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 게시글 ID를 넣어주세요.
+ *
+ *          responses:
+ *               201:
+ *                  description: 게시글 상세 정보 조회 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 201
+ *                              httpStatus: Created
+ *                              message: 게시글 조회가 완료되었습니다.
+ *               500:
+ *                  description: 오류 발생
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 게시글 상세 조회 중 오류가 발생했습니다.
+ */
+// 게시글 상세 조회
+router.get('/board/:id', verify, apiBoardController.readBoardDetails);
+
+/**
+ * @swagger
+ *  /board/:boardNumber:
+ *      put:
+ *          summary: 글 삭제하기
+ *          description: 게시글 삭제를 위해 글 ID를 입력해주세요.
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - Board
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/BoardDelete'
+ *                      example:
+ *                          boardNumber: 글 ID
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요!
+ *
+ *          responses:
+ *              200:
+ *                  description: 글 삭제 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: Ok
+ *                              message: 팔각도 글이 삭제되었습니다.
+ *
+ *              401:
+ *                  description: 글 삭제에 대한 권한 없음
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 401
+ *                              httpStatus: Unauthorized
+ *                              message: 글 작성자만 글 삭제가 가능합니다.
+ */
+// 게시글 삭제
+router.delete('/board/:id', verify, apiBoardController.deleteBoard);
+
 
 module.exports = router;
