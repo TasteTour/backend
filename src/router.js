@@ -265,13 +265,6 @@ router.delete('/user/logout', verify, apiUserController.logout);
  *              - Authorization: []
  *          tags:
  *              - Board
- *          parameters:
- *            - in: header
- *              name: Authorization
- *              schema:
- *                  type: string
- *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
- *
  *          responses:
  *              200:
  *                  description: 조회 성공
@@ -332,13 +325,6 @@ router.get('/board/latest', verify, apiBoardController.readLatestBoards);
  *              - Authorization: []
  *          tags:
  *              - Board
- *          parameters:
- *            - in: header
- *              name: Authorization
- *              schema:
- *                  type: string
- *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
- *
  *          responses:
  *              200:
  *                  description: 조회 성공
@@ -414,11 +400,7 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
  *                          boardStoreLocation: 경기도 시흥시 정왕동 한국공학대 E동 1층
  *                          boardContent: 교수 식당 맛없어요
  *          parameters:
- *            - in: header
- *              name: Authorization
- *              schema:
- *                  type: string
- *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
+ *
  *            - in: path
  *              name: boardNumber
  *              schema:
@@ -504,7 +486,7 @@ router.post('/board', verify, apiBoardController.writeBoard);
 
 /**
  * @swagger
- *  /board/search:
+ *  /board/search/{boardTitle}:
  *      get:
  *          summary: 상호명 검색
  *          description: 상호명으로 검색하기
@@ -512,18 +494,9 @@ router.post('/board', verify, apiBoardController.writeBoard);
  *            - Authorization: []
  *          tags:
  *            - Board
- *          requestBody:
- *              required: true
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          $ref: '#/components/schemas/BoardSearchByRestaurantName'
- *                      example:
- *                          boardTitle: 식당 이름
  *          parameters:
- *            - in: header
- *              name: Authorization
+ *            - in: path
+ *              name: boardTitle
  *              schema:
  *                  type: string
  *              description: 게시글 이름(상호명)을 넣어주세요.
@@ -551,11 +524,11 @@ router.post('/board', verify, apiBoardController.writeBoard);
  *                              message: 상호명으로 게시글 검색 중 오류가 발생했습니다.
  */
 // 게시글 상호명 검색
-router.get('/board/search', verify, apiBoardController.searchBoardByRestaurantName);
+router.get('/board/search/:boardTitle', verify, apiBoardController.searchBoardByRestaurantName);
 
 /**
  * @swagger
- *  /board/search:
+ *  /board/{boardNumber}:
  *      get:
  *          summary: 글 상세 검색
  *          description: 글 ID로 상세 조회하기
@@ -563,20 +536,11 @@ router.get('/board/search', verify, apiBoardController.searchBoardByRestaurantNa
  *            - Authorization: []
  *          tags:
  *            - Board
- *          requestBody:
- *              required: true
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          $ref: '#/components/schemas/BoardReadDetails'
- *                      example:
- *                          boardNumber: 글 ID
  *          parameters:
- *            - in: header
- *              name: Authorization
+ *            - in: path
+ *              name: boardNumber
  *              schema:
- *                  type: string
+ *                  type: int
  *              description: 게시글 ID를 넣어주세요.
  *
  *          responses:
@@ -602,30 +566,21 @@ router.get('/board/search', verify, apiBoardController.searchBoardByRestaurantNa
  *                              message: 게시글 상세 조회 중 오류가 발생했습니다.
  */
 // 게시글 상세 조회
-router.get('/board/:id', verify, apiBoardController.readBoardDetails);
+router.get('/board/:boardNumber', verify, apiBoardController.readBoardDetails);
 
 /**
  * @swagger
- *  /board/:boardNumber:
- *      put:
+ *  /board/{boardNumber}:
+ *      delete:
  *          summary: 글 삭제하기
  *          description: 게시글 삭제를 위해 글 ID를 입력해주세요.
  *          security:
  *              - Authorization: []
  *          tags:
  *              - Board
- *          requestBody:
- *              required: true
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          $ref: '#/components/schemas/BoardDelete'
- *                      example:
- *                          boardNumber: 글 ID
  *          parameters:
- *            - in: header
- *              name: Authorization
+ *            - in: path
+ *              name: boardNumber
  *              schema:
  *                  type: string
  *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요!
@@ -654,7 +609,7 @@ router.get('/board/:id', verify, apiBoardController.readBoardDetails);
  *                              message: 글 작성자만 글 삭제가 가능합니다.
  */
 // 게시글 삭제
-router.delete('/board/:id', verify, apiBoardController.deleteBoard);
+router.delete('/board/:boardNumber', verify, apiBoardController.deleteBoard);
 
 
 module.exports = router;

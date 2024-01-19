@@ -87,7 +87,7 @@ exports.boardDeleteComment = async (boardNumber) => {
  * 게시글 상호명(제목) 검색
  */
 exports.getBoardByRestaurantName = async (RestaurantName) => {
-    const qurey = `SELECT * FROM board ORDER BY boardTitle = ?`;
+    const qurey = `SELECT * FROM board WHERE boardTitle = ?`;
     return await pool(qurey, [RestaurantName]); // query의 ?에 RestaurantName 대입
 }
 
