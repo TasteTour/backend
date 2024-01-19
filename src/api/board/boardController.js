@@ -123,7 +123,7 @@ exports.searchBoardByRestaurantName = async (req, res) => {
  * 게시글 상세 조회
  */
 exports.readBoardDetails = async (req, res) => {
-    // HTTP 메시지 body에 있는 정보
+    // HTTP 메시지 body에 있는 정보`
     let { boardNumber } = req.body
     // 게시글 ID로 조회한 게시글
     let board = await repository.getBoardDetails(boardNumber);
