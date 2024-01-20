@@ -50,7 +50,7 @@ exports.download = async (req, res) => {
             res.send({
                 code: StatusCodes.NOT_FOUND,
                 httpStatus: ReasonPhrases.NOT_FOUND,
-                message: "이미지 다운로드 중 오류가 발생했습니다"})
+                message: "해당 이미지가 존재하지 않습니다."})
         }
 
     // 서버 오류 발생
