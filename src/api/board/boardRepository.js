@@ -21,6 +21,8 @@ exports.readPopularityBoards = async () => {
 }
 
 
+
+
 /**
  * 글 작성하기
  * @returns {Promise<boolean>}
@@ -80,27 +82,51 @@ exports.boardDeleteComment = async (boardNumber) => {
 
 // ========================= //
 /* TODO 제가 맡은 파트가 아니였네요.. 하하 */
+
+/**
+ * 게시글 상호명(제목) 검색
+ */
+exports.getBoardByRestaurantName = async (RestaurantName) => {
+    const qurey = `SELECT * FROM board WHERE boardTitle = ?`;
+    return await pool(qurey, [RestaurantName]); // query의 ?에 RestaurantName 대입
+}
+
 /**
  * 상세 글 불러오기
  * @param {int} boardNumber
  * @returns null boardNumber가 일치하지 않으면
  */
-exports.readBoard = async (boardNumber) => {
+exports.getBoardDetails = async (boardNumber) => {
     const query = `SELECT * FROM board WHERE boardNumber = ?`;
     let result = await pool(query, [boardNumber]);
+    // result가 0이라면 null 반환 / 있다면 result[0] 반환
+    return (result.length === 0) ? null : result[0];
+
+    /*
+    result.length는 항상 0 이상이므로 result.length < 0는 항상 false가 된다.
+    따라서, '<'가 아닌 '==='로 변경한다.
     return (result.length < 0) ? null : result[0];
+     */
 }
 
 /**
  * 게시글 삭체하는 메소드. 글 번호와 작성자가 일치해야 삭제됨
- * @param boardNumer
- * @param memberNumber
- * @returns {Promise<null|*>}
  */
-exports.deleteBoard = async (boardNumer, memberNumber) => {
-    const query = `DELETE * FROM board WHERE boardNumber = ? and memberNumber = ?`;
-    let result = await pool(query, [boardNumber]);
+exports.deleteBoard = async (boardNumber, memberNumber) => {
+    const query = `DELETE FROM board WHERE boardNumber = ? AND memberNumber = ?`;
+    let result = await pool(query, [boardNumber, memberNumber]);
     console.log(result);
     // TODO 리턴 값 확인해서 어떤걸로 리턴 해야 할 지 정해주셔야 해요!
-    // return (result.length < 0) ? null : result[0];
+    // 삭제에 실패할 경우 result.affectedRows == 0, 성공할 경우 1 이상의 정수
+    return result.affectedRows;
 }
+
+/**
+ * 해당 게시글이 존재하는지 확인
+ */
+exports.isBoardExists = async (boardNumber) => {
+    const query = `SELECT * FROM board WHERE boardNumber = ?`;
+    let result = await pool(query, [boardNumber]);
+    // result가 0이라면 null 반환 / 있다면 result[0] 반환
+    return (result.length === 0) ? null : result[0];
+};

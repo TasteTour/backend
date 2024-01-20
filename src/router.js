@@ -13,7 +13,8 @@ const upload = multer({dest: 'public/storage'}) // 소스를 잘 설정해야함
 
 const apiUserController = require('./api/user/userController');
 const apiBoardController = require('./api/board/boardController');
-const fileController = require('./api/file/fileController')
+const apiCommentController = require('./api/comment/commentController');
+const fileController = require('./api/file/fileController');
 
 // 전체 적용 (router.get 보다 먼저 선언해야 사용 가능함!)
 router.use(logging)
@@ -265,13 +266,6 @@ router.delete('/user/logout', verify, apiUserController.logout);
  *              - Authorization: []
  *          tags:
  *              - Board
- *          parameters:
- *            - in: header
- *              name: Authorization
- *              schema:
- *                  type: string
- *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
- *
  *          responses:
  *              200:
  *                  description: 조회 성공
@@ -332,13 +326,6 @@ router.get('/board/latest', verify, apiBoardController.readLatestBoards);
  *              - Authorization: []
  *          tags:
  *              - Board
- *          parameters:
- *            - in: header
- *              name: Authorization
- *              schema:
- *                  type: string
- *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
- *
  *          responses:
  *              200:
  *                  description: 조회 성공
@@ -414,11 +401,7 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
  *                          boardStoreLocation: 경기도 시흥시 정왕동 한국공학대 E동 1층
  *                          boardContent: 교수 식당 맛없어요
  *          parameters:
- *            - in: header
- *              name: Authorization
- *              schema:
- *                  type: string
- *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
+ *
  *            - in: path
  *              name: boardNumber
  *              schema:
@@ -501,6 +484,273 @@ router.put('/board/:boardNumber', verify, apiBoardController.updateBoard);
  *                              message: 글 등록 중 오류가 발생했습니다.
  */
 router.post('/board', verify, apiBoardController.writeBoard);
+
+/**
+ * @swagger
+ *  /board/search/{boardTitle}:
+ *      get:
+ *          summary: 상호명 검색
+ *          description: 상호명으로 검색하기
+ *          security:
+ *            - Authorization: []
+ *          tags:
+ *            - Board
+ *          parameters:
+ *            - in: path
+ *              name: boardTitle
+ *              schema:
+ *                  type: string
+ *              description: 게시글 이름(상호명)을 넣어주세요.
+ *
+ *          responses:
+ *               200:
+ *                  description: 상호명으로 게시글 검색 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: Ok
+ *                              message: 상호명으로 게시글 검색이 완료되었습니다.
+ *               500:
+ *                  description: 오류 발생
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 상호명으로 게시글 검색 중 오류가 발생했습니다.
+ */
+// 게시글 상호명 검색
+router.get('/board/search/:boardTitle', verify, apiBoardController.searchBoardByRestaurantName);
+
+/**
+ * @swagger
+ *  /board/{boardNumber}:
+ *      get:
+ *          summary: 글 상세 검색
+ *          description: 글 ID로 상세 조회하기
+ *          security:
+ *            - Authorization: []
+ *          tags:
+ *            - Board
+ *          parameters:
+ *            - in: path
+ *              name: boardNumber
+ *              schema:
+ *                  type: int
+ *              description: 게시글 ID를 넣어주세요.
+ *
+ *          responses:
+ *               200:
+ *                  description: 게시글 상세 정보 조회 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: Ok
+ *                              message: 게시글 조회가 완료되었습니다.
+ *               500:
+ *                  description: 오류 발생
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 게시글 상세 조회 중 오류가 발생했습니다.
+ */
+// 게시글 상세 조회
+router.get('/board/:boardNumber', verify, apiBoardController.readBoardDetails);
+
+/**
+ * @swagger
+ *  /board/{boardNumber}:
+ *      delete:
+ *          summary: 글 삭제하기
+ *          description: 게시글 삭제를 위해 글 ID를 입력해주세요.
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - Board
+ *          parameters:
+ *            - in: path
+ *              name: boardNumber
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요!
+ *
+ *          responses:
+ *              200:
+ *                  description: 글 삭제 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: Ok
+ *                              message: 팔각도 글이 삭제되었습니다.
+ *
+ *              401:
+ *                  description: 글 삭제에 대한 권한 없음
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 401
+ *                              httpStatus: Unauthorized
+ *                              message: 글 작성자만 글 삭제가 가능합니다.
+ */
+// 게시글 삭제
+router.delete('/board/:boardNumber', verify, apiBoardController.deleteBoard);
+
+/**
+ * @swagger
+ * paths:
+ *  /comment:
+ *    post:
+ *      summary: 댓글 등록하기
+ *      description: 댓글 등록하기 API입니다.
+ *      security:
+ *        - Authorization: []
+ *      tags:
+ *        - Comment
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/CommentWrite'
+ *            example:
+ *              commentContent: 댓글 내용
+ *              boardNumber: 1
+ *      responses:
+ *        201:
+ *          description: 댓글 등록 성공
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/HttpResponse'
+ *              example:
+ *                code: 201
+ *                httpStatus: Created
+ *                message: 댓글이 등록되었습니다.
+ *        500:
+ *          description: 오류 발생
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/HttpResponse'
+ *              example:
+ *                code: 500
+ *                httpStatus: Internal Server Error
+ *                message: 댓글 등록 중 오류가 발생했습니다.
+ */
+
+// 댓글 작성
+router.post('/comment', verify, apiCommentController.writeComment);
+
+/**
+ * @swagger
+ *  /comment/{commentNumber}:
+ *      put:
+ *          summary: 댓글 수정하기
+ *          description: 댓글 내용과 게시글 번호를 입력해주세요.
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - Comment
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/BoardUpdate'
+ *                      example:
+ *                          commentContent: 댓글 내용
+ *                          boardNumber: 1
+ *          parameters:
+ *            - in: path
+ *              name: commentNumber
+ *              schema:
+ *                  type: int
+ *          responses:
+ *              200:
+ *                  description: 댓글 수정 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: Ok
+ *                              message: 댓글이 수정되었습니다.
+ *
+ *              404:
+ *                  description: 댓글 수정에 대한 권한 없음
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 404
+ *                              httpStatus: Not Found
+ *                              message: 변경된 내용이 없습니다.
+ */
+// 댓글 수정
+router.put('/comment/:commentNumber', verify, apiCommentController.updateComment);
+
+/**
+ * @swagger
+ * paths:
+ *  /comment/{commentNumber}:
+ *    delete:
+ *      summary: 댓글 삭제하기
+ *      description: 댓글 삭제를 위해 댓글 ID와 게시글 번호를 입력해주세요.
+ *      security:
+ *        - Authorization: []
+ *      tags:
+ *        - Comment
+ *      parameters:
+ *        - in: path
+ *          name: commentNumber
+ *          schema:
+ *            type: int
+ *          description: 댓글 삭제 API 입니다.
+ *      responses:
+ *        200:
+ *          description: 댓글 삭제 성공
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/HttpResponse'
+ *              example:
+ *                code: 200
+ *                httpStatus: Ok
+ *                message: 댓글이 삭제되었습니다.
+ *        401:
+ *          description: 댓글 삭제에 대한 권한 없음
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/HttpResponse'
+ *              example:
+ *                code: 401
+ *                httpStatus: Unauthorized
+ *                message: 댓글 작성자만 댓글 삭제가 가능합니다.
+ */
+// 댓글 삭제
+router.delete('/comment/:commentNumber', verify, apiCommentController.deleteComment);
 
 
 module.exports = router;
