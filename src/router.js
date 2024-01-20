@@ -503,15 +503,15 @@ router.post('/board', verify, apiBoardController.writeBoard);
  *              description: 게시글 이름(상호명)을 넣어주세요.
  *
  *          responses:
- *               201:
+ *               200:
  *                  description: 상호명으로 게시글 검색 성공
  *                  content:
  *                      application/json:
  *                          schema:
  *                              $ref: '#/components/schemas/HttpResponse'
  *                          example:
- *                              code: 201
- *                              httpStatus: Created
+ *                              code: 200
+ *                              httpStatus: Ok
  *                              message: 상호명으로 게시글 검색이 완료되었습니다.
  *               500:
  *                  description: 오류 발생
@@ -545,15 +545,15 @@ router.get('/board/search/:boardTitle', verify, apiBoardController.searchBoardBy
  *              description: 게시글 ID를 넣어주세요.
  *
  *          responses:
- *               201:
+ *               200:
  *                  description: 게시글 상세 정보 조회 성공
  *                  content:
  *                      application/json:
  *                          schema:
  *                              $ref: '#/components/schemas/HttpResponse'
  *                          example:
- *                              code: 201
- *                              httpStatus: Created
+ *                              code: 200
+ *                              httpStatus: Ok
  *                              message: 게시글 조회가 완료되었습니다.
  *               500:
  *                  description: 오류 발생
