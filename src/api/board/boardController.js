@@ -215,10 +215,10 @@ exports.deleteBoard = async (req, res) => {
 
         // 게시글 삭제 성공
         if (affectedRows > 0){
-            res.status(StatusCodes.CREATED)
+            res.status(StatusCodes.OK)
                 .send({
-                    code: StatusCodes.CREATED,
-                    httpStatus: ReasonPhrases.CREATED,
+                    code: StatusCodes.OK,
+                    httpStatus: ReasonPhrases.OK,
                     message: "정상적으로 글이 삭제되었습니다."});
         }
 
