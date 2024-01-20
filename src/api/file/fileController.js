@@ -36,7 +36,7 @@ exports.download = async (req, res) => {
         // 이미지가 있는 경우
         if (image.length > 0) {
             // 이미지의 경로 가져오기
-            const imagePath = image.imagePath;
+            const imagePath = image[0].imagePath;
 
             res.status(StatusCodes.OK)
             res.send({
