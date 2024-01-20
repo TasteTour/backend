@@ -14,7 +14,7 @@ exports.writeComment = async (commentContent, memberNumber, boardNumber) => {
 exports.updateComment = async (commentContent, commentNumber, memberNumber, boardNumber) => {
     const query = `UPDATE comment SET 
                                     commentContent = IFNULL(?, commentContent),
-                                    commentUpdate = NOW()
+                                    commentUpdated = NOW()
                         WHERE commentNumber = ? AND memberNumber = ? AND boardNumber = ?`;
     return await pool(query, [commentContent, commentNumber, memberNumber, boardNumber]);
 }
@@ -23,8 +23,18 @@ exports.updateComment = async (commentContent, commentNumber, memberNumber, boar
 /**
  * 댓글 삭제
  */
-exports.deleteComment = async (commentNumber, memberNumber, boardNumber) => {
-    const query = `DELETE FROM comment WHERE commentNumber = ? AND memberNumber = ? AND boardNumber = ?`;
+exports.deleteComment = async (commentNumber, memberNumber) => {
+    const query = `DELETE FROM comment WHERE commentNumber = ? AND memberNumber = ?`;
 
-    return await pool(query, [commentNumber, memberNumber, boardNumber]);
+    return await pool(query, [commentNumber, memberNumber]);
 }
+
+/**
+ * 해당 댓글이 존재하는지 확인
+ */
+exports.isCommentExists = async (commentNumber) => {
+    const query = `SELECT * FROM comment WHERE commentNumber = ?`;
+    let result = await pool(query, [commentNumber]);
+    // result가 0이라면 null 반환 / 있다면 result[0] 반환
+    return (result.length === 0) ? null : result[0];
+};

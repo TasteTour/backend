@@ -1,5 +1,5 @@
-const repository = require('./boardRepository')
-const crypto = require('crypto')
+const repository = require('./boardRepository');
+const crypto = require('crypto');
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 const jwt = require("../user/jwt");
 

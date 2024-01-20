@@ -120,3 +120,13 @@ exports.deleteBoard = async (boardNumber, memberNumber) => {
     // 삭제에 실패할 경우 result.affectedRows == 0, 성공할 경우 1 이상의 정수
     return result.affectedRows;
 }
+
+/**
+ * 해당 게시글이 존재하는지 확인
+ */
+exports.isBoardExists = async (boardNumber) => {
+    const query = `SELECT * FROM board WHERE boardNumber = ?`;
+    let result = await pool(query, [boardNumber]);
+    // result가 0이라면 null 반환 / 있다면 result[0] 반환
+    return (result.length === 0) ? null : result[0];
+};
