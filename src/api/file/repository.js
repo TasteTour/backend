@@ -15,13 +15,10 @@ exports.create = async (name, path, size, boardNumber) => {
 
 /**
  * DB에 저장된 파일을 불러오는 함수
- * @param id
- * @returns {Promise<null|*>}
  */
 exports.show = async (id) => {
     const query =  `SELECT * FROM files WHERE id = ?`;
 
     // DB에서 결과 가져오기.
-    let result = await pool(query,[id]);
-    return (result.length < 1) ? null: result[0];
+    return await pool(query, [id]);
 }
