@@ -50,7 +50,7 @@ router.use(logging)
  *                                  type: array
  *                                  description: 이미지
  *                      example:
- *                          file: [1.jpg, 2.jpg]
+ *                          file: 1.jpg
  *          parameters:
  *            - in: header
  *              name: Authorization
@@ -69,6 +69,7 @@ router.use(logging)
  *                              code: 201
  *                              httpStatus: Created
  *                              message: 이미지가 등록되었습니다.
+ *                              fileNumber: 5
  *               500:
  *                  description: 오류 발생
  *                  content:
@@ -80,7 +81,7 @@ router.use(logging)
  *                              httpStatus: Internal Server Error
  *                              message: 이미지 등록 중 오류가 발생했습니다.
  */
-router.post('/file/:boardNumber', upload.array('file'), fileController.upload);
+router.post('/file/:boardNumber', upload.single('file'), fileController.upload);
 
 /**
  * @swagger
@@ -100,15 +101,15 @@ router.post('/file/:boardNumber', upload.array('file'), fileController.upload);
  *                  type: int
  *              description: 다운로드를 원하는 이미지의 fileNumber를 입력해주세요.
  *          responses:
- *               201:
+ *               200:
  *                  description: 이미지 다운로드 성공
  *                  content:
  *                      application/json:
  *                          schema:
  *                              $ref: '#/components/schemas/HttpResponse'
  *                          example:
- *                              code: 201
- *                              httpStatus: Created
+ *                              code: 200
+ *                              httpStatus: Ok
  *                              message: 이미지가 다운로드 되었습니다.
  *               500:
  *                  description: 오류 발생
