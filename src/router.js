@@ -288,6 +288,67 @@ router.post('/user/login', apiUserController.login);
  */
 router.delete('/user/logout', verify, apiUserController.logout);
 
+/**
+ * @swagger
+ *  /user/mypage/change/password:
+ *      put:
+ *          summary: 비밀번호 변경하기
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - User
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/UserRegister'
+ *                      example:
+ *                          lastMemberPassword: 지난 비밀번호
+ *                          memberPassword: 변경할 비밀번호
+ *                          
+ *          responses:
+ *              200:
+ *                  description: 비밀번호 변경 완료
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: OK
+ *                              message: 비밀번호 정상적으로 변경되었습니다.
+ *
+ *              403:
+ *                  description: 로그인 실패
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 403
+ *                              httpStatus: Forbidden
+ *                              message: 이전 비밀번호가 일치하지 않습니다.
+ *
+ *              500:
+ *                  description: 서버 오류
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 401
+ *                              httpStatus: Unauthorized
+ *                              message: 비밀번호 변경 DB 구성 중 오류가 발생했습니다.
+ */
+router.put('/user/mypage/change/password', verify, apiUserController.updatePassword);
 /* ============================================================================== */
 
 /**
@@ -626,7 +687,7 @@ router.get('/board/:boardNumber', verify, apiBoardController.readBoardDetails);
  *              name: boardNumber
  *              schema:
  *                  type: string
- *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요!
+ *              description: 게시글 ID를 넣어주세요
  *
  *          responses:
  *              200:

@@ -49,6 +49,18 @@ exports.findMemberNumber = async (email) => {
 }
 
 /**
+ * 비밀번호 변경 메소드
+ * @param memberNumber
+ * @param memberPassword
+ * @returns result
+ */
+exports.updatePassword = async (memberNumber, lastmemberPassword, memberPassword) => {
+    const query = `UPDATE member SET memberPassword = ? WHERE memberNumber = ? and memberPassword = ?`;
+    let result = await pool(query, [memberPassword, memberNumber, lastmemberPassword]);
+    return result;
+}
+
+/**
  * 폐기된 토큰인지 확인하는 모듈
  * @param token
  * @returns false (폐기되지 않은 토큰이면)
