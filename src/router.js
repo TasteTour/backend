@@ -32,7 +32,7 @@ router.use(logging)
 
 /**
  * @swagger
- *  /file:
+ *  /file/{boardNumber}:
  *      post:
  *          summary: 이미지 등록하기
  *          description: 글 등록하기 API 호출 후, 이 API를 호출해주세요!
@@ -57,7 +57,10 @@ router.use(logging)
  *              schema:
  *                  type: string
  *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
- *
+ *            - in: path
+ *              name: boardNumber
+ *              schema:
+ *                  type: int
  *          responses:
  *               201:
  *                  description: 이미지 등록 성공
@@ -505,7 +508,6 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
  *                          boardStoreLocation: 경기도 시흥시 정왕동 한국공학대 E동 1층
  *                          boardContent: 교수 식당 맛없어요
  *          parameters:
- *
  *            - in: path
  *              name: boardNumber
  *              schema:

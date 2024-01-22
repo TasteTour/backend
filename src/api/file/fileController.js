@@ -6,10 +6,9 @@ exports.upload = async (req, res) => {
     //파일들이 Array형태로 저장 중.
     const file = req.file;
     let boardNumber = req.param.boardNumber;
-    let results = 0;
 
     // 파일들 하나하나 DB에 이름으로 저장함.
-    const { affectedRows, insertId } = repository.create(files.name, files.path, files.size, boardNumber);
+    const { affectedRows, insertId } = repository.create(file.name, file.path, file.size, boardNumber);
 
     if(affectedRows > 0){
         res.status(StatusCodes.CREATED)
