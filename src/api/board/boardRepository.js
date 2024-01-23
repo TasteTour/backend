@@ -110,6 +110,21 @@ exports.getBoardDetails = async (boardNumber) => {
 }
 
 /**
+ * 카테고리 별 게시글 조회
+ */
+exports.getBoardByCategory = async (boardCategory) => {
+    const query = `SELECT * FROM board WHERE boardCategory = ?`;
+    // boardCategory에 해당하는 게시글 조회
+    return await pool(query, [boardCategory]);
+
+    /*
+    result.length는 항상 0 이상이므로 result.length < 0는 항상 false가 된다.
+    따라서, '<'가 아닌 '==='로 변경한다.
+    return (result.length < 0) ? null : result[0];
+     */
+}
+
+/**
  * 게시글 삭체하는 메소드. 글 번호와 작성자가 일치해야 삭제됨
  */
 exports.deleteBoard = async (boardNumber, memberNumber) => {

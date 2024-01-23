@@ -567,7 +567,49 @@ router.get('/board/search/:boardTitle', verify, apiBoardController.searchBoardBy
  *                              message: 게시글 상세 조회 중 오류가 발생했습니다.
  */
 // 게시글 상세 조회
-router.get('/board/:boardNumber', verify, apiBoardController.readBoardDetails);
+// URI에 detail를 안넣으면 swagger가 카테고리 별 구분 경로와 구분을 못함
+router.get('/board/detail/:boardNumber', verify, apiBoardController.readBoardDetails);
+
+/**
+ * @swagger
+ *  /board/category:
+ *      get:
+ *          summary: 게시글 카테고리별 검색
+ *          description: 게시글 카테고리별 검색하기
+ *          security:
+ *            - Authorization: []
+ *          tags:
+ *            - Board
+ *          parameters:
+ *            - in: query
+ *              name: boardCategory
+ *              type: string
+ *              description: 게시글의 카테고리를 넣어주세요.
+ *
+ *          responses:
+ *               200:
+ *                  description: 게시글 카테고리별 검색 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: Ok
+ *                              message: 게시글 카테고리별 조회가 완료되었습니다.
+ *               500:
+ *                  description: 오류 발생
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 게시글 카테고리별 조회 중 오류가 발생했습니다.
+ */
+// 카테고리별 검색(쿼리 파라메터 사용)
+router.get('/board/category', verify, apiBoardController.searchBoardByCategory);
 
 /**
  * @swagger

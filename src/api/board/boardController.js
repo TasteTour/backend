@@ -191,6 +191,46 @@ exports.readBoardDetails = async (req, res) => {
     }
 }
 
+/**
+ * 카테고리 별 게시글 조회
+ * 필요한 정보(사실상 거의 다 필요해서 그냥 전체 정보 넘기는 게 편할듯)
+ * boardNumber, boardTitle, boardStar, boardCategory, boardContent, boardViews, boardCreated, boardComment, memberNumber
+ */
+exports.searchBoardByCategory = async (req, res) => {
+    try {
+        // 쿼리 파라메터로 카테고리 request
+        let { boardCategory } = req.query;
+
+        // 카테고리에 해당하는 게시글들
+        let boards = await repository.getBoardByCategory(boardCategory);
+
+        // 상호명에 해당하는 게시글이 존재하지 않는 경우
+        if (!boards || boards.length === 0) {
+            res.status(StatusCodes.NOT_FOUND)
+                .send({
+                    code: StatusCodes.NOT_FOUND,
+                    httpStatus: ReasonPhrases.NOT_FOUND,
+                    message: "해당 음식 카테고리의 게시글이 없습니다." });
+        } else {
+            // 상호명에 해당하는 게시글 조회 성공
+            res.status(StatusCodes.OK)
+                .send({
+                    code: StatusCodes.OK,
+                    httpStatus: ReasonPhrases.OK,
+                    message: `${boardCategory} 해당하는 게시글 입니다.`,
+                    data: boards
+                });
+        }
+    // DB 쿼리 중 오류 발생시
+    } catch (error) {
+        console.error("DB 조회 중 오류 발생", error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+            .send({
+                code: StatusCodes.INTERNAL_SERVER_ERROR,
+                httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR,
+                message: "음식 카테고리 조회 중 서버에서 오류가 발생했습니다." });
+    }
+}
 
 /**
  * 게시글 삭제
