@@ -150,6 +150,37 @@ exports.searchBoardByRestaurantName = async (req, res) => {
 }
 
 /**
+ * 내 글 조회하는 api
+ * @param req
+ * @param res
+ * @returns {Promise<void>}
+ */
+exports.readmyBoards = async (req, res) => {
+    try{
+        let token = req.headers['authorization'];
+
+        // memberNumber에 접근하는 방법
+        let memberNumber;
+        await jwt.jwtVerify(token).then(decoded => {
+            memberNumber = decoded.decoded.payload.memberNumber;
+        })
+
+        let item = await repository.readMyBoard(memberNumber);
+
+        if(item == null){
+            res.status(StatusCodes.NOT_FOUND)
+            res.send({ code: StatusCodes.NOT_FOUND, httpStatus: ReasonPhrases.NOT_FOUND, message: "작성한 글이 없습니다."})
+        }
+        else{
+            res.status(StatusCodes.OK)
+            res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: "내가 작성한 글입니다.", data: item})
+        }
+    }
+    catch (e){
+
+    }
+}
+/**
  * 게시글 상세 조회
  */
 exports.readBoardDetails = async (req, res) => {
@@ -158,6 +189,8 @@ exports.readBoardDetails = async (req, res) => {
         let { boardNumber } = req.params;
         // 게시글 ID로 조회한 게시글
         let board = await repository.getBoardDetails(boardNumber);
+
+        console.log("왜...?>");
 
         // 게시글이 존재하지 않는 경우
         if (board == null) {
