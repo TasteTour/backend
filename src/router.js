@@ -32,7 +32,7 @@ router.use(logging)
 
 /**
  * @swagger
- *  /file:
+ *  /file/{boardNumber}:
  *      post:
  *          summary: 이미지 등록하기
  *          description: 글 등록하기 API 호출 후, 이 API를 호출해주세요!
@@ -50,14 +50,17 @@ router.use(logging)
  *                                  type: array
  *                                  description: 이미지
  *                      example:
- *                          file: [1.jpg, 2.jpg]
+ *                          file: 1.jpg
  *          parameters:
  *            - in: header
  *              name: Authorization
  *              schema:
  *                  type: string
  *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
- *
+ *            - in: path
+ *              name: boardNumber
+ *              schema:
+ *                  type: int
  *          responses:
  *               201:
  *                  description: 이미지 등록 성공
@@ -69,6 +72,7 @@ router.use(logging)
  *                              code: 201
  *                              httpStatus: Created
  *                              message: 이미지가 등록되었습니다.
+ *                              fileNumber: 5
  *               500:
  *                  description: 오류 발생
  *                  content:
@@ -80,7 +84,49 @@ router.use(logging)
  *                              httpStatus: Internal Server Error
  *                              message: 이미지 등록 중 오류가 발생했습니다.
  */
-router.post('/file/:boardNumber', upload.array('file'), fileController.upload);
+router.post('/file/:boardNumber', upload.single('file'), fileController.upload);
+
+/**
+ * @swagger
+ * paths:
+ *   /file/{fileNumber}:
+ *      get:
+ *          summary: 이미지 다운로드
+ *          description: 게시글 상세 보기에서 필요한 API 입니다.
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - File
+ *          parameters:
+ *            - in: path
+ *              name: fileNumber
+ *              schema:
+ *                  type: int
+ *              description: 다운로드를 원하는 이미지의 fileNumber를 입력해주세요.
+ *          responses:
+ *               200:
+ *                  description: 이미지 다운로드 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: Ok
+ *                              message: 이미지가 다운로드 되었습니다.
+ *               500:
+ *                  description: 오류 발생
+ *                  content:
+ *                      multipart/form-data:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 500
+ *                              httpStatus: Internal Server Error
+ *                              message: 이미지 다운로드 중 오류가 발생했습니다.
+ */
+// 이미지 다운로드
+router.get('/file/:fileNumber', fileController.download);
 
 /* ============================================================================== */
 /**
@@ -246,6 +292,67 @@ router.post('/user/login', apiUserController.login);
  */
 router.delete('/user/logout', verify, apiUserController.logout);
 
+/**
+ * @swagger
+ *  /user/mypage/change/password:
+ *      put:
+ *          summary: 비밀번호 변경하기
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *              - User
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요! 아래에는 값을 넣지 말고 테스트 해주세요!!
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          $ref: '#/components/schemas/UserRegister'
+ *                      example:
+ *                          lastMemberPassword: 지난 비밀번호
+ *                          memberPassword: 변경할 비밀번호
+ *                          
+ *          responses:
+ *              200:
+ *                  description: 비밀번호 변경 완료
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: OK
+ *                              message: 비밀번호 정상적으로 변경되었습니다.
+ *
+ *              403:
+ *                  description: 로그인 실패
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 403
+ *                              httpStatus: Forbidden
+ *                              message: 이전 비밀번호가 일치하지 않습니다.
+ *
+ *              500:
+ *                  description: 서버 오류
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 401
+ *                              httpStatus: Unauthorized
+ *                              message: 비밀번호 변경 DB 구성 중 오류가 발생했습니다.
+ */
+router.put('/user/mypage/change/password', verify, apiUserController.updatePassword);
 /* ============================================================================== */
 
 /**
@@ -401,7 +508,6 @@ router.get('/board/popular', verify, apiBoardController.readPopularBoards);
  *                          boardStoreLocation: 경기도 시흥시 정왕동 한국공학대 E동 1층
  *                          boardContent: 교수 식당 맛없어요
  *          parameters:
- *
  *            - in: path
  *              name: boardNumber
  *              schema:
@@ -485,6 +591,7 @@ router.put('/board/:boardNumber', verify, apiBoardController.updateBoard);
  */
 router.post('/board', verify, apiBoardController.writeBoard);
 
+// 게시글 상호명 검색
 /**
  * @swagger
  *  /board/search/{boardTitle}:
@@ -524,9 +631,9 @@ router.post('/board', verify, apiBoardController.writeBoard);
  *                              httpStatus: Internal Server Error
  *                              message: 상호명으로 게시글 검색 중 오류가 발생했습니다.
  */
-// 게시글 상호명 검색
 router.get('/board/search/:boardTitle', verify, apiBoardController.searchBoardByRestaurantName);
 
+// 게시글 상세 조회
 /**
  * @swagger
  *  /board/{boardNumber}:
@@ -626,7 +733,7 @@ router.get('/board/category', verify, apiBoardController.searchBoardByCategory);
  *              name: boardNumber
  *              schema:
  *                  type: string
- *              description: 우측 상단 좌물쇠 버튼을 눌러 값을 넣은 후 테스트 해주세요!
+ *              description: 게시글 ID를 넣어주세요
  *
  *          responses:
  *              200:
@@ -653,6 +760,87 @@ router.get('/board/category', verify, apiBoardController.searchBoardByCategory);
  */
 // 게시글 삭제
 router.delete('/board/:boardNumber', verify, apiBoardController.deleteBoard);
+
+
+/**
+ * @swagger
+ *  /board/my/boards:
+ *      get:
+ *          summary: 나의 글 조회하기
+ *          description: 토큰으로 나의 글 조회하기
+ *          security:
+ *            - Authorization: []
+ *          tags:
+ *            - Board
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 토큰
+ *
+ *          responses:
+ *               200:
+ *                  description: 나의 글 조회 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: Ok
+ *                              message: 나의 게시글 조회가 완료되었습니다.
+ *                              data: [
+ *                                      {
+ *                                          boardNumber: 2,
+ *                                          boardTitle: 팔각도,
+ *                                          boardStar : 4,
+ *                                          boardCategoru: 한식,
+ *                                          boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                          boardContent: 뭐라는거야?,
+ *                                          boardViews: 352,
+ *                                          boardCreated: "2024-01-18T10:56:44.000Z",
+ *                                          boardUpdated: null,
+ *                                          boardComment: 0,
+ *                                          memberNumber: 4
+ *                                      },
+ *                                      {
+ *                                          boardNumber: 1,
+ *                                          boardTitle: 팔각도,
+ *                                          boardStar : 4,
+ *                                          boardCategoru: 한식,
+ *                                          boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                          boardContent: 뭐라는거야?,
+ *                                          boardViews: 352,
+ *                                          boardCreated: "2024-01-18T10:56:44.000Z",
+ *                                          boardUpdated: null,
+ *                                          boardComment: 0,
+ *                                          memberNumber: 4                                      }
+ *                                  ]
+ *               404:
+ *                  description: 오류 발생
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 404
+ *                              httpStatus: Not Found
+ *                              message: 작성한 글이 없습니다
+ */
+router.get('/board/my/boards', verify, apiBoardController.readmyBoards);
+
+/* ======================================================================================== */
+
+/**
+ *   ______   ______   .___  ___. .___  ___.  _______ .__   __. .___________.
+ *  /      | /  __  \  |   \/   | |   \/   | |   ____||  \ |  | |           |
+ * |  ,----'|  |  |  | |  \  /  | |  \  /  | |  |__   |   \|  | `---|  |----`
+ * |  |     |  |  |  | |  |\/|  | |  |\/|  | |   __|  |  . `  |     |  |
+ * |  `----.|  `--'  | |  |  |  | |  |  |  | |  |____ |  |\   |     |  |
+ *  \______| \______/  |__|  |__| |__|  |__| |_______||__| \__|     |__|
+ *
+ */
 
 /**
  * @swagger

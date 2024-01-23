@@ -2,6 +2,7 @@ const jwt = require('./jwt')
 const repository = require('./userRepository')
 const crypto = require('crypto')
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
+const {jwtVerify} = require("./jwt");
 
 // TODO : 이메일 인증 기능 추가할지 고민
 
@@ -78,7 +79,7 @@ exports.login = async (req, res) => {
  */
 exports.logout = async (req, res) => {
     const token = req.header('Authorization');
-    console.log(token)
+
     try{
         const {affectedRows} = await repository.addRevokedToken(token);
         if (affectedRows > 0){
@@ -90,8 +91,39 @@ exports.logout = async (req, res) => {
         res.status(StatusCodes.UNAUTHORIZED)
         res.send({ code: StatusCodes.UNAUTHORIZED, httpStatus: ReasonPhrases.UNAUTHORIZED, message: "이미 폐기된 토큰입니다."})
     }
-
-
-
-
 }
+
+/**
+ * 비밀번호 변경 메소드
+ * @param header('Authorization')
+ * @returns {Promise<void>}
+ */
+exports.updatePassword = async (req, res) => {
+    const token = req.header('Authorization');
+    let { lastMemberPassword, memberPassword } = req.body;
+
+    const lastmemberPasswordResult = await crypto.pbkdf2Sync(lastMemberPassword, process.env.SALT_KEY,50,100, 'sha512')
+    const memberPasswordResult = await crypto.pbkdf2Sync(memberPassword, process.env.SALT_KEY,50,100, 'sha512')
+
+    let memberNumber;
+    await jwt.jwtVerify(token).then(decoded => {
+        memberNumber = decoded.decoded.payload.memberNumber;
+    })
+
+    try{
+        const { affectedRows, changedRows } = await repository.updatePassword(memberNumber, lastmemberPasswordResult.toString('base64'), memberPasswordResult.toString('base64'));
+        if (changedRows > 0){
+            res.status(StatusCodes.OK)
+            res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: "비밀번호가 정상적으로 변경되었습니다."})
+        }
+        else if(affectedRows === 0){
+            res.status(StatusCodes.FORBIDDEN)
+            res.send({ code: StatusCodes.FORBIDDEN, httpStatus: ReasonPhrases.FORBIDDEN, message: "이전 비밀번호가 일치하지 않습니다."})
+        }
+    }
+    catch (Error){
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "[비밀번호 변경] DB 구성 중 오류가 발생했습니다."})
+    }
+}
+

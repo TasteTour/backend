@@ -80,8 +80,17 @@ exports.boardDeleteComment = async (boardNumber) => {
     let result = await pool(query, [boardNumber])
 }
 
+/**
+ * 내가 작성한 글 조회하기
+ * @param memberNumber
+ * @returns {Promise<unknown>}
+ */
+exports.readMyBoard = async (memberNumber) => {
+    const query = `SELECT * FROM board WHERE memberNumber = ?`;
+    return await pool(query, [memberNumber]); // query의 ?에 RestaurantName 대입
+}
+
 // ========================= //
-/* TODO 제가 맡은 파트가 아니였네요.. 하하 */
 
 /**
  * 게시글 상호명(제목) 검색
