@@ -591,6 +591,7 @@ router.put('/board/:boardNumber', verify, apiBoardController.updateBoard);
  */
 router.post('/board', verify, apiBoardController.writeBoard);
 
+// 게시글 상호명 검색
 /**
  * @swagger
  *  /board/search/{boardTitle}:
@@ -630,9 +631,9 @@ router.post('/board', verify, apiBoardController.writeBoard);
  *                              httpStatus: Internal Server Error
  *                              message: 상호명으로 게시글 검색 중 오류가 발생했습니다.
  */
-// 게시글 상호명 검색
 router.get('/board/search/:boardTitle', verify, apiBoardController.searchBoardByRestaurantName);
 
+// 게시글 상세 조회
 /**
  * @swagger
  *  /board/{boardNumber}:
@@ -672,8 +673,8 @@ router.get('/board/search/:boardTitle', verify, apiBoardController.searchBoardBy
  *                              httpStatus: Internal Server Error
  *                              message: 게시글 상세 조회 중 오류가 발생했습니다.
  */
-// 게시글 상세 조회
 router.get('/board/:boardNumber', verify, apiBoardController.readBoardDetails);
+
 
 /**
  * @swagger
@@ -717,6 +718,87 @@ router.get('/board/:boardNumber', verify, apiBoardController.readBoardDetails);
  */
 // 게시글 삭제
 router.delete('/board/:boardNumber', verify, apiBoardController.deleteBoard);
+
+
+/**
+ * @swagger
+ *  /board/my/boards:
+ *      get:
+ *          summary: 나의 글 조회하기
+ *          description: 토큰으로 나의 글 조회하기
+ *          security:
+ *            - Authorization: []
+ *          tags:
+ *            - Board
+ *          parameters:
+ *            - in: header
+ *              name: Authorization
+ *              schema:
+ *                  type: string
+ *              description: 토큰
+ *
+ *          responses:
+ *               200:
+ *                  description: 나의 글 조회 성공
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 200
+ *                              httpStatus: Ok
+ *                              message: 나의 게시글 조회가 완료되었습니다.
+ *                              data: [
+ *                                      {
+ *                                          boardNumber: 2,
+ *                                          boardTitle: 팔각도,
+ *                                          boardStar : 4,
+ *                                          boardCategoru: 한식,
+ *                                          boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                          boardContent: 뭐라는거야?,
+ *                                          boardViews: 352,
+ *                                          boardCreated: "2024-01-18T10:56:44.000Z",
+ *                                          boardUpdated: null,
+ *                                          boardComment: 0,
+ *                                          memberNumber: 4
+ *                                      },
+ *                                      {
+ *                                          boardNumber: 1,
+ *                                          boardTitle: 팔각도,
+ *                                          boardStar : 4,
+ *                                          boardCategoru: 한식,
+ *                                          boardStoreLocation: 경기도 시흥시 정왕동 3,
+ *                                          boardContent: 뭐라는거야?,
+ *                                          boardViews: 352,
+ *                                          boardCreated: "2024-01-18T10:56:44.000Z",
+ *                                          boardUpdated: null,
+ *                                          boardComment: 0,
+ *                                          memberNumber: 4                                      }
+ *                                  ]
+ *               404:
+ *                  description: 오류 발생
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/HttpResponse'
+ *                          example:
+ *                              code: 404
+ *                              httpStatus: Not Found
+ *                              message: 작성한 글이 없습니다
+ */
+router.get('/board/my/boards', verify, apiBoardController.readmyBoards);
+
+/* ======================================================================================== */
+
+/**
+ *   ______   ______   .___  ___. .___  ___.  _______ .__   __. .___________.
+ *  /      | /  __  \  |   \/   | |   \/   | |   ____||  \ |  | |           |
+ * |  ,----'|  |  |  | |  \  /  | |  \  /  | |  |__   |   \|  | `---|  |----`
+ * |  |     |  |  |  | |  |\/|  | |  |\/|  | |   __|  |  . `  |     |  |
+ * |  `----.|  `--'  | |  |  |  | |  |  |  | |  |____ |  |\   |     |  |
+ *  \______| \______/  |__|  |__| |__|  |__| |_______||__| \__|     |__|
+ *
+ */
 
 /**
  * @swagger
