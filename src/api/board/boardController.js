@@ -84,14 +84,15 @@ exports.updateBoard = async (req, res) => {
 exports.writeBoard = async (req, res) => {
     let { boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent } = req.body
     let token = req.headers['authorization'];
-    let memberNumber;
+    let memberNumber, memberName;
 
     // memberNumber에 접근하는 방법
     await jwt.jwtVerify(token).then(decoded => {
         memberNumber = decoded.decoded.payload.memberNumber;
+        memberName = decoded.decoded.payload.memberName;
     })
 
-    let { affectedRows } = await repository.writeBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, memberNumber);
+    let { affectedRows } = await repository.writeBoard(boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, memberNumber, memberName);
 
     if (affectedRows > 0){
         res.status(StatusCodes.CREATED)
@@ -238,36 +239,30 @@ exports.searchBoardByCategory = async (req, res) => {
         // 카테고리에 해당하는 게시글들
         let boards = await repository.getBoardByCategory(boardCategory);
 
-        // boards에 memberNumber로 사용자 memberEmail을 찾아서 삽입
-        for (let i = 0; i < boards.length; i++) {
-            let memberEmail = await userRepository.findMemberName(boards[i].memberNumber);
-            boards[i].memberEmail = memberEmail;
-        }
-
         // 필요한 필드만 남기기
         const filteredBoards = boards.map(board => {
             const {
-                boardNumber,
                 boardTitle,
                 boardStar,
                 boardCategory,
                 boardContent,
                 boardViews,
                 boardCreated,
+                boardUpdated,
                 boardComment,
-                memberEmail
+                memberName
             } = board;
 
             return {
-                boardNumber,
                 boardTitle,
                 boardStar,
                 boardCategory,
                 boardContent,
                 boardViews,
                 boardCreated,
+                boardUpdated,
                 boardComment,
-                memberEmail
+                memberName
             };
         });
 
@@ -284,7 +279,7 @@ exports.searchBoardByCategory = async (req, res) => {
                 .send({
                     code: StatusCodes.OK,
                     httpStatus: ReasonPhrases.OK,
-                    message: `${boardCategory} 해당하는 게시글 입니다.`,
+                    message: `${boardCategory} 해당하는 게시글 입니다..`,
                     data: filteredBoards
                 });
         }

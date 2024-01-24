@@ -42,8 +42,8 @@ exports.find = async (email) => {
  * @param email
  * @returns 4 (회원번호)
  */
-exports.findMemberNumber = async (email) => {
-    const query = `SELECT memberNumber FROM member WHERE memberEmail = ?`;
+exports.findMemberNumberAndMemberName = async (email) => {
+    const query = `SELECT memberNumber, memberName FROM member WHERE memberEmail = ?`;
     let result = await pool(query, [email]);
     return (result.length < 0) ? null : result[0];
 }
