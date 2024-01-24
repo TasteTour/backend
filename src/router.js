@@ -636,7 +636,7 @@ router.get('/board/search/:boardTitle', verify, apiBoardController.searchBoardBy
 // 게시글 상세 조회
 /**
  * @swagger
- *  /board/{boardNumber}:
+ *  /board/detail/{boardNumber}:
  *      get:
  *          summary: 글 상세 검색
  *          description: 글 ID로 상세 조회하기
