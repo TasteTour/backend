@@ -82,3 +82,13 @@ exports.addRevokedToken = async (token) => {
     return await pool(query, [token]);
 
 }
+
+/**
+ * 회원번호로 회원 이메일 찾기
+ */
+exports.findMemberName = async (memberNumber) => {
+    const query = `SELECT memberEmail FROM member WHERE memberNumber = ?`;
+    let result = await pool(query, [memberNumber]);
+    // console.log(result[0].memberEmail);
+    return (result.length < 0) ? null : result[0].memberEmail;
+}
