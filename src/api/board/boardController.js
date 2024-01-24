@@ -1,4 +1,5 @@
 const repository = require('./boardRepository');
+const userRepository = require('../user/userRepository')
 const crypto = require('crypto');
 const { StatusCodes, ReasonPhrases } = require('http-status-codes');
 const jwt = require("../user/jwt");
@@ -237,6 +238,39 @@ exports.searchBoardByCategory = async (req, res) => {
         // 카테고리에 해당하는 게시글들
         let boards = await repository.getBoardByCategory(boardCategory);
 
+        // boards에 memberNumber로 사용자 memberEmail을 찾아서 삽입
+        for (let i = 0; i < boards.length; i++) {
+            let memberEmail = await userRepository.findMemberName(boards[i].memberNumber);
+            boards[i].memberEmail = memberEmail;
+        }
+
+        // 필요한 필드만 남기기
+        const filteredBoards = boards.map(board => {
+            const {
+                boardNumber,
+                boardTitle,
+                boardStar,
+                boardCategory,
+                boardContent,
+                boardViews,
+                boardCreated,
+                boardComment,
+                memberEmail
+            } = board;
+
+            return {
+                boardNumber,
+                boardTitle,
+                boardStar,
+                boardCategory,
+                boardContent,
+                boardViews,
+                boardCreated,
+                boardComment,
+                memberEmail
+            };
+        });
+
         // 상호명에 해당하는 게시글이 존재하지 않는 경우
         if (!boards || boards.length === 0) {
             res.status(StatusCodes.NOT_FOUND)
@@ -251,7 +285,7 @@ exports.searchBoardByCategory = async (req, res) => {
                     code: StatusCodes.OK,
                     httpStatus: ReasonPhrases.OK,
                     message: `${boardCategory} 해당하는 게시글 입니다.`,
-                    data: boards
+                    data: filteredBoards
                 });
         }
     // DB 쿼리 중 오류 발생시
