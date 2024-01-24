@@ -286,7 +286,7 @@ exports.searchBoardByCategory = async (req, res) => {
                 .send({
                     code: StatusCodes.OK,
                     httpStatus: ReasonPhrases.OK,
-                    message: `${boardCategory} 해당하는 게시글 입니다.`,
+                    message: `${boardCategory} 해당하는 게시글 입니다..`,
                     data: boards
                 });
         }
