@@ -9,8 +9,10 @@ const { pool } = require('../../data/index')
  * @returns {Promise<unknown>}
  */
 exports.create = async (name, path, size, boardNumber) => {
-    const query =  `INSERT INTO files (imageName, imagePath, imageSize, boardNumber) VALUES (?,?,?,?)`;
-    return await pool(query, [name, path, size, boardNumber]);
+    const query =  `INSERT INTO image (imageName, imagePath, imageSize, boardNumber) VALUES (?,?,?,?)`;
+    const result = await pool(query, [name, path, size, boardNumber]);
+    console.log(result)
+    return result;
 }
 
 /**

@@ -5,33 +5,32 @@ const {StatusCodes, ReasonPhrases} = require("http-status-codes");
 exports.upload = async (req, res) => {
     //파일들이 Array형태로 저장 중.
     const file = req.file;
-    let boardNumber = req.param.boardNumber;
+    console.log(file);
+    let { boardNumber } = req.params;
 
     // 파일들 하나하나 DB에 이름으로 저장함.
-    const { affectedRows, insertId } = repository.create(file.name, file.path, file.size, boardNumber);
-
-    if(affectedRows > 0){
-        res.status(StatusCodes.CREATED)
-        res.send({ code: StatusCodes.CREATED, httpStatus: ReasonPhrases.CREATED, message: "정상적으로 이미지가 등록되었습니다.", fileNumber: insertId})
-    }
-    else{
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "이미지 등록 중 오류가 발생했습니다"})
-    }
-
+    repository.create(file.filename, file.path, file.size, boardNumber).then((result) => {
+        if(result['affectedRows'] > 0){
+            res.status(StatusCodes.CREATED)
+            res.send({ code: StatusCodes.CREATED, httpStatus: ReasonPhrases.CREATED, message: "정상적으로 이미지가 등록되었습니다.", fileNumber: result['insertId']})
+        }
+        else{
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+            res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "이미지 등록 중 오류가 발생했습니다"})
+        }// 여기서 결과를 사용할 수 있음
+    })
 }
 
 // 이미지 다운로드 위한 함수
 // 실제 파일을 다운로드 할 수 있도록 변경했습니다!!
 exports.download = async (req, res) => {
     try {
-        let fileNumber = req.params.fileNumber;
-
+        let { fileNumber } = req.params;
         // DB에서 파일 불러오기
         let image = await repository.show(fileNumber);
 
         // 파일을 다운로드 하는 함수
-        res.download(image.file_path, image.original_name, (err) =>{
+        res.download(image[0]['imagePath'], image[0]['imageName'], (err) =>{
             if (err) {
                 res.status(StatusCodes.NOT_FOUND)
                 res.send({code: StatusCodes.NOT_FOUND,
