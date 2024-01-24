@@ -17,12 +17,14 @@ exports.writeComment = async (req, res) => {
 
         let token = req.headers['authorization'];
         let memberNumber;
+        let memberName;
         // memberNumber에 접근하는 방법
         await jwt.jwtVerify(token).then(decoded => {
             memberNumber = decoded.decoded.payload.memberNumber;
+            memberName = decoded.decoded.payload.memberName;
         })
 
-        let { affectedRows } = await repository.writeComment(commentContent, memberNumber, boardNumber);
+        let { affectedRows } = await repository.writeComment(commentContent, memberNumber, boardNumber, memberName);
 
         if (affectedRows > 0) {
             res.status(StatusCodes.CREATED).send({
@@ -41,6 +43,7 @@ exports.writeComment = async (req, res) => {
         });
     }
 }
+
 /**
  * 댓글 수정
  */
@@ -114,5 +117,25 @@ exports.deleteComment = async (req, res) => {
             httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR,
             message: error.message
         });
+    }
+}
+
+exports.readComment = async (req, res) => {
+    try {
+        let { boardNumber } = req.params;
+        repository.readComment(boardNumber).then((item) => {
+            if(item == null){
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: "글 최신 순 조회 중에 오류가 발생했습니다"})
+            }
+            else{
+                res.status(StatusCodes.OK)
+                res.send({ code: StatusCodes.OK, httpStatus: ReasonPhrases.OK, message: `${boardNumber}번 글 댓글 조회입니다.`, data: item})
+            }
+        });
+    }
+    catch (e) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        res.send({ code: StatusCodes.INTERNAL_SERVER_ERROR, httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR, message: `${e}`})
     }
 }

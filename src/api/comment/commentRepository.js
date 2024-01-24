@@ -3,9 +3,9 @@ const { pool } = require('../../data/index')
 /**
  * 댓글 작성
  */
-exports.writeComment = async (commentContent, memberNumber, boardNumber) => {
-    const query = `INSERT INTO comment (commentContent, memberNumber, boardNumber)  VALUES (?,?,?)`;
-    return await pool(query, [commentContent, memberNumber, boardNumber]);
+exports.writeComment = async (commentContent, memberNumber, boardNumber, memberName) => {
+    const query = `INSERT INTO comment (commentContent, memberNumber, boardNumber, memberName)  VALUES (?,?,?,?)`;
+    return await pool(query, [commentContent, memberNumber, boardNumber, memberName]);
 }
 
 /**
@@ -27,6 +27,14 @@ exports.deleteComment = async (commentNumber, memberNumber) => {
     const query = `DELETE FROM comment WHERE commentNumber = ? AND memberNumber = ?`;
 
     return await pool(query, [commentNumber, memberNumber]);
+}
+
+/**
+ * 댓글 조회
+ */
+exports.readComment = async (boardNumber) => {
+    const query = `SELECT * FROM comment WHERE boardNumber = ?`;
+    return await pool(query, [boardNumber]);
 }
 
 /**

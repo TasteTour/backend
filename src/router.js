@@ -982,5 +982,45 @@ router.put('/comment/:commentNumber', verify, apiCommentController.updateComment
 // 댓글 삭제
 router.delete('/comment/:commentNumber', verify, apiCommentController.deleteComment);
 
+/**
+ * @swagger
+ * paths:
+ *  /comment/{boardNumber}:
+ *    get:
+ *      summary: 댓글 조회하기
+ *      description: 댓글 조회하기
+ *      security:
+ *        - Authorization: []
+ *      tags:
+ *        - Comment
+ *      parameters:
+ *        - in: path
+ *          name: boardNumber
+ *          schema:
+ *            type: int
+ *          description: 글 번호
+ *      responses:
+ *        200:
+ *          description: 댓글 조회 성공
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/HttpResponse'
+ *              example:
+ *                code: 200
+ *                httpStatus: Ok
+ *                message: 댓글이 조회
+ *        500:
+ *          description: 댓글 삭제에 대한 권한 없음
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/HttpResponse'
+ *              example:
+ *                code: 500
+ *                httpStatus: Internal Server Error
+ *                message: 에러 ㅋ
+ */
+router.get('/comment/:boardNumber', verify, apiCommentController.readComment);
 
 module.exports = router;
