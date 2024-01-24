@@ -89,7 +89,7 @@ router.post('/file/:boardNumber', upload.single('file'), fileController.upload);
 /**
  * @swagger
  * paths:
- *   /file/{fileNumber}:
+ *   /file/{boardNumber}:
  *      get:
  *          summary: 이미지 다운로드
  *          description: 게시글 상세 보기에서 필요한 API 입니다.
@@ -99,10 +99,10 @@ router.post('/file/:boardNumber', upload.single('file'), fileController.upload);
  *              - File
  *          parameters:
  *            - in: path
- *              name: fileNumber
+ *              name: boardNumber
  *              schema:
  *                  type: int
- *              description: 다운로드를 원하는 이미지의 fileNumber를 입력해주세요.
+ *              description: 이미지의 boardNumber를 넣어주세요!!
  *          responses:
  *               200:
  *                  description: 이미지 다운로드 성공
@@ -126,7 +126,7 @@ router.post('/file/:boardNumber', upload.single('file'), fileController.upload);
  *                              message: 이미지 다운로드 중 오류가 발생했습니다.
  */
 // 이미지 다운로드
-router.get('/file/:fileNumber', fileController.download);
+router.get('/file/:boardNumber', fileController.download);
 
 /* ============================================================================== */
 /**

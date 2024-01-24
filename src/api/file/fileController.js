@@ -25,9 +25,11 @@ exports.upload = async (req, res) => {
 // 실제 파일을 다운로드 할 수 있도록 변경했습니다!!
 exports.download = async (req, res) => {
     try {
-        let { fileNumber } = req.params;
+        let { boardNumber } = req.params;
         // DB에서 파일 불러오기
-        let image = await repository.show(fileNumber);
+        let image = await repository.show(boardNumber);
+
+        console.log(image);
 
         // 파일을 다운로드 하는 함수
         res.download(image[0]['imagePath'], image[0]['imageName'], (err) =>{
@@ -69,4 +71,5 @@ exports.download = async (req, res) => {
                 httpStatus: ReasonPhrases.INTERNAL_SERVER_ERROR,
                 message: "이미지 다운로드 중 오류 발생했습니다."});
     }
+
 }
