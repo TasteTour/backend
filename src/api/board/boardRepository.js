@@ -108,6 +108,10 @@ exports.getBoardByRestaurantName = async (RestaurantName) => {
 exports.getBoardDetails = async (boardNumber) => {
     const query = `SELECT * FROM board WHERE boardNumber = ?`;
     let result = await pool(query, [boardNumber]);
+
+    const query2 = 'UPDATE board SET boardViews = boardViews + 1 WHERE boardNumber = ?'
+    await pool(query2, [boardNumber]);
+
     // result가 0이라면 null 반환 / 있다면 result[0] 반환
     return (result.length === 0) ? null : result[0];
 

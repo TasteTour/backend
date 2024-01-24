@@ -5,6 +5,10 @@ const { pool } = require('../../data/index')
  */
 exports.writeComment = async (commentContent, memberNumber, boardNumber, memberName) => {
     const query = `INSERT INTO comment (commentContent, memberNumber, boardNumber, memberName)  VALUES (?,?,?,?)`;
+
+    const query2 = 'UPDATE board SET boardComment = boardComment + 1 WHERE boardNumber = ?';
+    await pool(query2, [boardNumber]);
+
     return await pool(query, [commentContent, memberNumber, boardNumber, memberName]);
 }
 

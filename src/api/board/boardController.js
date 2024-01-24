@@ -192,7 +192,6 @@ exports.readBoardDetails = async (req, res) => {
         // 게시글 ID로 조회한 게시글
         let board = await repository.getBoardDetails(boardNumber);
 
-        console.log("왜...?>");
 
         // 게시글이 존재하지 않는 경우
         if (board == null) {
