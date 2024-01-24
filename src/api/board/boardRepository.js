@@ -27,9 +27,9 @@ exports.readPopularityBoards = async () => {
  * 글 작성하기
  * @returns {Promise<boolean>}
  */
-exports.writeBoard = async (boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, memberNumber) => {
-    const query = `INSERT INTO board (boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, memberNumber)  VALUES (?,?,?,?,?,?)`;
-    return await pool(query, [boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, memberNumber]);
+exports.writeBoard = async (boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, memberNumber, memberName) => {
+    const query = `INSERT INTO board (boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, memberNumber, memberName)  VALUES (?,?,?,?,?, ?, ?)`;
+    return await pool(query, [boardTitle, boardStar, boardCategory, boardStoreLocation, boardContent, memberNumber, memberName]);
 }
 
 /**
