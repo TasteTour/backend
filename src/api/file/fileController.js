@@ -9,7 +9,7 @@ exports.upload = async (req, res) => {
     let { boardNumber } = req.params;
 
     // 파일들 하나하나 DB에 이름으로 저장함.
-    repository.create(file.originalname, file.path, file.size, boardNumber).then((result) => {
+    repository.create(file.originalname, file.path, file.size).then((result) => {
         if(result['affectedRows'] > 0){
             res.status(StatusCodes.CREATED)
             res.send({ code: StatusCodes.CREATED, httpStatus: ReasonPhrases.CREATED, message: "정상적으로 이미지가 등록되었습니다.", fileNumber: result['insertId']})

@@ -8,9 +8,12 @@ const { pool } = require('../../data/index')
  * @param {string} size
  * @returns {Promise<unknown>}
  */
-exports.create = async (name, path, size, boardNumber) => {
+exports.create = async (name, path, size) => {
+    const query2 = 'SELECT max(boardNumber)+1 from image';
+    const result2 = await pool(query2, []);
+
     const query =  `INSERT INTO image (imageName, imagePath, imageSize, boardNumber) VALUES (?,?,?,?)`;
-    const result = await pool(query, [name, path, size, boardNumber]);
+    const result = await pool(query, [name, path, size, result2[0]['max(boardNumber)+1']]);
     console.log(result)
     return result;
 }
